@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import { useTranslation } from 'react-i18next'
 import { routes } from '@/data/routes'
@@ -33,7 +33,6 @@ const ALL_STOPS = routes.flatMap((route) =>
   })),
 )
 
-// Dedupe stops at the same position (e.g. Dolphin Roundabout appears on multiple routes)
 const UNIQUE_STOPS = ALL_STOPS.filter(
   (stop, idx, arr) => arr.findIndex((s) => s.name === stop.name) === idx,
 )
@@ -61,7 +60,7 @@ export default function LocationSearch({
   const [placesResults, setPlacesResults] = useState<LocationSuggestion[]>([])
   const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const hasFocusRef = useRef(false)
 
   const placesLib = useMapsLibrary('places')
   const geocodingLib = useMapsLibrary('geocoding')
@@ -82,7 +81,6 @@ export default function LocationSearch({
 
   const debouncedQuery = useDebounce(value, 300)
 
-  // Local stop search
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setLocalResults([])
@@ -105,7 +103,6 @@ export default function LocationSearch({
     setLocalResults(matches)
   }, [debouncedQuery, t])
 
-  // Google Places search
   useEffect(() => {
     if (!debouncedQuery.trim() || !autocompleteService.current) {
       setPlacesResults([])
@@ -141,35 +138,39 @@ export default function LocationSearch({
     )
   }, [debouncedQuery, t])
 
-  const allSuggestions = [...localResults, ...placesResults]
+  const allSuggestions = useMemo(
+    () => [...localResults, ...placesResults],
+    [localResults, placesResults],
+  )
 
+  // Only auto-open when this input has focus and there are suggestions
   useEffect(() => {
-    if (allSuggestions.length > 0 && value.trim()) {
+    if (hasFocusRef.current && allSuggestions.length > 0 && value.trim()) {
       setOpen(true)
+    } else if (allSuggestions.length === 0) {
+      setOpen(false)
     }
-  }, [allSuggestions.length, value])
+  }, [allSuggestions, value])
 
-  // Reset active index when suggestions change
   useEffect(() => {
     setActiveIndex(-1)
-  }, [localResults, placesResults])
+  }, [allSuggestions])
 
   const resolveAndSelect = useCallback(
     (suggestion: LocationSuggestion) => {
+      setOpen(false)
+
       if (suggestion.position) {
         onSelect(suggestion.label, suggestion.position)
-        setOpen(false)
         return
       }
 
-      // Geocode the place to get coordinates
       if (suggestion.placeId && geocoder.current) {
         geocoder.current.geocode({ placeId: suggestion.placeId }, (results, status) => {
           if (status === 'OK' && results && results[0]) {
             const loc = results[0].geometry.location
             onSelect(suggestion.label, { lat: loc.lat(), lng: loc.lng() })
           }
-          setOpen(false)
         })
       }
     },
@@ -193,11 +194,11 @@ export default function LocationSearch({
     }
   }
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false)
+        hasFocusRef.current = false
       }
     }
     document.addEventListener('mousedown', handler)
@@ -211,11 +212,14 @@ export default function LocationSearch({
           {icon}
         </div>
         <input
-          ref={inputRef}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => allSuggestions.length > 0 && setOpen(true)}
+          onFocus={() => {
+            hasFocusRef.current = true
+            if (allSuggestions.length > 0 && value.trim()) setOpen(true)
+          }}
+          onBlur={() => { hasFocusRef.current = false }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -233,7 +237,7 @@ export default function LocationSearch({
               {localResults.map((s, i) => (
                 <button
                   key={s.id}
-                  onMouseDown={() => resolveAndSelect(s)}
+                  onMouseDown={(e) => { e.preventDefault(); resolveAndSelect(s) }}
                   onMouseEnter={() => setActiveIndex(i)}
                   className={`w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors ${activeIndex === i ? 'bg-primary-50' : 'hover:bg-gray-50'}`}
                 >
@@ -260,7 +264,7 @@ export default function LocationSearch({
                 return (
                   <button
                     key={s.id}
-                    onMouseDown={() => resolveAndSelect(s)}
+                    onMouseDown={(e) => { e.preventDefault(); resolveAndSelect(s) }}
                     onMouseEnter={() => setActiveIndex(idx)}
                     className={`w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors ${activeIndex === idx ? 'bg-primary-50' : 'hover:bg-gray-50'}`}
                   >

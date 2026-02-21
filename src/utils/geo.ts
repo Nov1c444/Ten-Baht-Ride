@@ -12,6 +12,33 @@ export const haversineDistance = (a: LatLng, b: LatLng): number => {
   return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h))
 }
 
+// Project a point onto a line segment, return the closest point on segment and its distance
+const projectOntoSegment = (
+  point: LatLng,
+  segA: LatLng,
+  segB: LatLng,
+): { closest: LatLng; distance: number } => {
+  const dx = segB.lng - segA.lng
+  const dy = segB.lat - segA.lat
+  const lenSq = dx * dx + dy * dy
+
+  if (lenSq === 0) return { closest: segA, distance: haversineDistance(point, segA) }
+
+  const t = Math.max(0, Math.min(1, ((point.lng - segA.lng) * dx + (point.lat - segA.lat) * dy) / lenSq))
+  const closest = { lat: segA.lat + t * dy, lng: segA.lng + t * dx }
+  return { closest, distance: haversineDistance(point, closest) }
+}
+
+// Find the minimum distance from a point to the route path (polyline)
+const distanceToPath = (position: LatLng, path: LatLng[]): number => {
+  let minDist = Infinity
+  for (let i = 0; i < path.length - 1; i++) {
+    const { distance } = projectOntoSegment(position, path[i], path[i + 1])
+    if (distance < minDist) minDist = distance
+  }
+  return minDist
+}
+
 const findNearestStop = (position: LatLng, stops: RouteStop[]): { stop: RouteStop; distance: number } =>
   stops.reduce(
     (best, stop) => {
@@ -52,7 +79,6 @@ export const findBestRoute = (destination: LatLng, routes: SongthaewRoute[]): Ri
   }
 }
 
-// Find transfer points: stops on different routes that are at the same location or within TRANSFER_PROXIMITY
 const findTransferPoints = (
   routeA: SongthaewRoute,
   routeB: SongthaewRoute,
@@ -63,6 +89,24 @@ const findTransferPoints = (
       .filter((pair) => pair.distance <= TRANSFER_PROXIMITY),
   )
 
+/**
+ * Evaluate how well a route serves a given position.
+ * Uses path-based proximity: the walking distance is to the nearest point on the route path,
+ * but the recommended stop is the nearest named stop (landmark the user can recognize).
+ */
+const evaluateRouteForPosition = (
+  position: LatLng,
+  route: SongthaewRoute,
+): { walkDistance: number; stop: RouteStop; reachable: boolean } => {
+  const pathDist = distanceToPath(position, route.path)
+  const { stop } = findNearestStop(position, route.stops)
+  return {
+    walkDistance: Math.round(Math.min(pathDist, haversineDistance(position, stop.position))),
+    stop,
+    reachable: pathDist <= MAX_WALKING_DISTANCE,
+  }
+}
+
 const buildDirectCandidates = (
   origin: LatLng,
   destination: LatLng,
@@ -70,9 +114,9 @@ const buildDirectCandidates = (
 ): TripAdvice[] =>
   routes
     .map((route) => {
-      const boarding = findNearestStop(origin, route.stops)
-      const alighting = findNearestStop(destination, route.stops)
-      if (boarding.distance > MAX_WALKING_DISTANCE || alighting.distance > MAX_WALKING_DISTANCE) return null
+      const boarding = evaluateRouteForPosition(origin, route)
+      const alighting = evaluateRouteForPosition(destination, route)
+      if (!boarding.reachable || !alighting.reachable) return null
       if (boarding.stop.id === alighting.stop.id) return null
 
       const segment: TripSegment = {
@@ -86,8 +130,8 @@ const buildDirectCandidates = (
       return {
         segments: [segment],
         totalPrice: route.price,
-        walkToBoard: Math.round(boarding.distance),
-        walkFromAlight: Math.round(alighting.distance),
+        walkToBoard: boarding.walkDistance,
+        walkFromAlight: alighting.walkDistance,
         originPosition: origin,
         destinationPosition: destination,
         tipKeys: DEFAULT_TIP_KEYS,
@@ -105,7 +149,6 @@ const buildTransferCandidates = (
       const transfers = findTransferPoints(routeA, routeB)
       if (transfers.length === 0) return []
 
-      // Try both directions: A→transfer→B and B→transfer→A
       return transfers.flatMap(({ stopA, stopB }) => {
         const options: TripAdvice[] = []
 
@@ -113,10 +156,10 @@ const buildTransferCandidates = (
           [routeA, routeB, stopA, stopB],
           [routeB, routeA, stopB, stopA],
         ] as [SongthaewRoute, SongthaewRoute, RouteStop, RouteStop][]) {
-          const boarding = findNearestStop(origin, first.stops)
-          const alighting = findNearestStop(destination, second.stops)
+          const boarding = evaluateRouteForPosition(origin, first)
+          const alighting = evaluateRouteForPosition(destination, second)
 
-          if (boarding.distance > MAX_WALKING_DISTANCE || alighting.distance > MAX_WALKING_DISTANCE) continue
+          if (!boarding.reachable || !alighting.reachable) continue
           if (boarding.stop.id === firstStop.id && alighting.stop.id === secondStop.id) continue
 
           const seg1: TripSegment = {
@@ -139,8 +182,8 @@ const buildTransferCandidates = (
           options.push({
             segments: [seg1, seg2],
             totalPrice: first.price + second.price,
-            walkToBoard: Math.round(boarding.distance),
-            walkFromAlight: Math.round(alighting.distance),
+            walkToBoard: boarding.walkDistance,
+            walkFromAlight: alighting.walkDistance,
             originPosition: origin,
             destinationPosition: destination,
             tipKeys: DEFAULT_TIP_KEYS,

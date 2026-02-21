@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { routes } from '@/data/routes'
 import { planTrip } from '@/utils/geo'
@@ -77,6 +77,14 @@ export default function AdvisorPage() {
     setDestPos(position)
   }, [t])
 
+  const handleOriginChange = useCallback((v: string) => { setOriginQuery(v); setOriginPos(null) }, [])
+  const handleOriginSelect = useCallback((label: string, pos: LatLng) => { setOriginQuery(label); setOriginPos(pos) }, [])
+  const handleDestChange = useCallback((v: string) => { setDestQuery(v); setDestPos(null) }, [])
+  const handleDestSelect = useCallback((label: string, pos: LatLng) => { setDestQuery(label); setDestPos(pos) }, [])
+
+  const originIcon = useMemo(() => <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></svg>, [])
+  const destIcon = useMemo(() => <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>, [])
+
   const highlightRouteIds = trip ? trip.segments.map((s) => s.routeId) : undefined
   const firstSegment = trip?.segments[0]
   const lastSegment = trip?.segments[trip.segments.length - 1]
@@ -101,10 +109,10 @@ export default function AdvisorPage() {
               <div className="flex gap-2">
                 <LocationSearch
                   value={originQuery}
-                  onChange={(v) => { setOriginQuery(v); setOriginPos(null) }}
-                  onSelect={(label, pos) => { setOriginQuery(label); setOriginPos(pos) }}
+                  onChange={handleOriginChange}
+                  onSelect={handleOriginSelect}
                   placeholder={t('advisor.originPlaceholder')}
-                  icon={<svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></svg>}
+                  icon={originIcon}
                   className="flex-1"
                 />
                 <button
@@ -137,10 +145,10 @@ export default function AdvisorPage() {
               <label className="text-xs font-medium text-gray-500 mb-1 block">{t('advisor.destinationLabel')}</label>
               <LocationSearch
                 value={destQuery}
-                onChange={(v) => { setDestQuery(v); setDestPos(null) }}
-                onSelect={(label, pos) => { setDestQuery(label); setDestPos(pos) }}
+                onChange={handleDestChange}
+                onSelect={handleDestSelect}
                 placeholder={t('advisor.inputPlaceholder')}
-                icon={<svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>}
+                icon={destIcon}
               />
             </div>
 
