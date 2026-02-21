@@ -1,4 +1,4 @@
-import { APIProvider, Map, useMap, useMapsLibrary } from '@vis.gl/react-google-maps'
+import { Map, useMap, useMapsLibrary } from '@vis.gl/react-google-maps'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { SongthaewRoute, LatLng } from '@/types'
@@ -258,25 +258,23 @@ export default function RouteMap({
 
   return (
     <div className={className}>
-      <APIProvider apiKey={API_KEY}>
-        <Map
-          defaultCenter={center}
-          defaultZoom={effectiveIds ? 14 : 13}
-          mapId="ten-baht-ride-map"
-          className="w-full h-full rounded-xl overflow-hidden"
-          disableDefaultUI={false}
-          gestureHandling="greedy"
-        >
-          <RoutePolylines routes={routes} highlightIds={effectiveIds} />
-          <TripMarkers
-            origin={originPosition}
-            boarding={boardingPosition}
-            alighting={alightingPosition}
-            transfer={transferPosition}
-          />
-          {fitPoints.length >= 2 && <FitBoundsController points={fitPoints} />}
-        </Map>
-      </APIProvider>
+      <Map
+        defaultCenter={center}
+        defaultZoom={effectiveIds ? 14 : 13}
+        mapId="ten-baht-ride-map"
+        className="w-full h-full rounded-xl overflow-hidden"
+        disableDefaultUI={false}
+        gestureHandling="greedy"
+      >
+        <RoutePolylines routes={routes} highlightIds={effectiveIds} />
+        <TripMarkers
+          origin={originPosition}
+          boarding={boardingPosition}
+          alighting={alightingPosition}
+          transfer={transferPosition}
+        />
+        {fitPoints.length >= 2 && <FitBoundsController points={fitPoints} />}
+      </Map>
     </div>
   )
 }

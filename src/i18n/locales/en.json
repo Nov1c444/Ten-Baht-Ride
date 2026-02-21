@@ -23,20 +23,45 @@
       "description": "The most popular route. Runs south along Beach Road, loops at Walking Street, then returns north along Second Road.",
       "priceNote": "Fixed 10 THB anywhere along the route"
     },
+    "northPattaya": {
+      "name": "North Pattaya Road",
+      "description": "Runs east-west along North Pattaya Road between the Dolphin Roundabout and Sukhumvit Road.",
+      "priceNote": "Fixed 10 THB for the standard route"
+    },
+    "centralPattaya": {
+      "name": "Central Pattaya Road",
+      "description": "Runs east-west along Central Pattaya Road, connecting Sukhumvit Road to Second Road and Beach Road.",
+      "priceNote": "Fixed 10 THB for the standard route"
+    },
+    "southPattaya": {
+      "name": "South Pattaya Road",
+      "description": "Runs along South Pattaya Road from Sukhumvit intersection toward Walking Street area.",
+      "priceNote": "Fixed 10 THB for the standard route"
+    },
+    "naKluea": {
+      "name": "Naklua Route",
+      "description": "Runs from Dolphin Roundabout north to Naklua area, passing Wongamat Beach and Sanctuary of Truth.",
+      "priceNote": "10 THB for the standard route"
+    },
+    "soiBuakhao": {
+      "name": "Soi Buakhao Route",
+      "description": "Runs along Soi Buakhao from South Pattaya northward, a popular route through the central entertainment area.",
+      "priceNote": "Fixed 10 THB for the standard route"
+    },
+    "thirdRoad": {
+      "name": "Third Road Route",
+      "description": "Runs along Third Road (Pattaya Sai 3), connecting South Pattaya to the northern areas via the inland road.",
+      "priceNote": "Fixed 10 THB for the standard route"
+    },
     "jomtien": {
       "name": "Jomtien Route",
       "description": "Connects South Pattaya (Walking Street area) to Jomtien Beach. Great for beach-goers.",
       "priceNote": "10-20 THB depending on distance"
     },
-    "naklua": {
-      "name": "Naklua Route",
-      "description": "Runs from Dolphin Roundabout north to Naklua area, passing Wongamat Beach and Sanctuary of Truth.",
-      "priceNote": "10 THB for the standard route"
-    },
-    "sukhumvit": {
-      "name": "Sukhumvit Route",
-      "description": "Runs along Sukhumvit Road from North Pattaya intersection heading east.",
-      "priceNote": "10 THB for the standard route"
+    "thepprasit": {
+      "name": "Thepprasit Route",
+      "description": "Runs along Thepprasit Road from Sukhumvit to the night market area. Operates Fri-Sun evenings only.",
+      "priceNote": "Fixed 10 THB for the standard route"
     }
   },
   "stops": {
@@ -118,7 +143,9 @@
     "directRoute": "Direct",
     "transferRoute": "Transfer required",
     "planTrip": "Plan Trip",
-    "subtitle2": "Enter your starting point and destination to find the best songthaew route"
+    "subtitle2": "Enter your starting point and destination to find the best songthaew route",
+    "stopResults": "Songthaew Stops",
+    "placesResults": "Nearby Places"
   },
   "tips": {
     "pressButton": "Press the buzzer/bell button when approaching your stop",

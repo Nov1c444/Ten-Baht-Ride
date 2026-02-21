@@ -4,6 +4,7 @@ import { routes } from '@/data/routes'
 import { planTrip } from '@/utils/geo'
 import type { TripAdvice, LatLng } from '@/types'
 import RouteMap from '@/components/Map/RouteMap'
+import LocationSearch from '@/components/LocationSearch/LocationSearch'
 
 const POPULAR_DESTINATIONS = [
   { nameKey: 'stops.walkingStreet', position: { lat: 12.9260, lng: 100.8860 } },
@@ -22,17 +23,6 @@ const POPULAR_ORIGINS = [
 ]
 
 type GeoStatus = 'idle' | 'loading' | 'success' | 'denied' | 'unavailable'
-
-function resolveStopPosition(query: string, t: (key: string) => string): LatLng | null {
-  const normalized = query.toLowerCase()
-  const allStops = routes.flatMap((route) => route.stops)
-  const matched = allStops.find(
-    (stop) =>
-      stop.name.toLowerCase().includes(normalized) ||
-      t(stop.nameKey).toLowerCase().includes(normalized),
-  )
-  return matched?.position ?? null
-}
 
 export default function AdvisorPage() {
   const { t } = useTranslation()
@@ -66,19 +56,16 @@ export default function AdvisorPage() {
   }, [t])
 
   const handlePlanTrip = useCallback(() => {
-    const origin = originPos ?? resolveStopPosition(originQuery, t)
-    const dest = destPos ?? resolveStopPosition(destQuery, t)
-
-    if (!origin || !dest) {
+    if (!originPos || !destPos) {
       setTrip(null)
       setSearched(true)
       return
     }
 
-    const result = planTrip(origin, dest, routes)
+    const result = planTrip(originPos, destPos, routes)
     setTrip(result)
     setSearched(true)
-  }, [originPos, originQuery, destPos, destQuery, t])
+  }, [originPos, destPos])
 
   const handleOriginQuickPick = useCallback((nameKey: string, position: LatLng) => {
     setOriginQuery(t(nameKey))
@@ -89,10 +76,6 @@ export default function AdvisorPage() {
     setDestQuery(t(nameKey))
     setDestPos(position)
   }, [t])
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handlePlanTrip()
-  }
 
   const highlightRouteIds = trip ? trip.segments.map((s) => s.routeId) : undefined
   const firstSegment = trip?.segments[0]
@@ -116,23 +99,14 @@ export default function AdvisorPage() {
             <div>
               <label className="text-xs font-medium text-gray-500 mb-1 block">{t('advisor.originLabel')}</label>
               <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="12" cy="12" r="8" />
-                  </svg>
-                  <input
-                    type="text"
-                    value={originQuery}
-                    onChange={(e) => { setOriginQuery(e.target.value); setOriginPos(null) }}
-                    onKeyDown={handleKeyDown}
-                    placeholder={t('advisor.originPlaceholder')}
-                    className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                </div>
+                <LocationSearch
+                  value={originQuery}
+                  onChange={(v) => { setOriginQuery(v); setOriginPos(null) }}
+                  onSelect={(label, pos) => { setOriginQuery(label); setOriginPos(pos) }}
+                  placeholder={t('advisor.originPlaceholder')}
+                  icon={<svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></svg>}
+                  className="flex-1"
+                />
                 <button
                   onClick={handleLocate}
                   disabled={geoStatus === 'loading'}
@@ -161,23 +135,13 @@ export default function AdvisorPage() {
             {/* Destination */}
             <div>
               <label className="text-xs font-medium text-gray-500 mb-1 block">{t('advisor.destinationLabel')}</label>
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-                <input
-                  type="text"
-                  value={destQuery}
-                  onChange={(e) => { setDestQuery(e.target.value); setDestPos(null) }}
-                  onKeyDown={handleKeyDown}
-                  placeholder={t('advisor.inputPlaceholder')}
-                  className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-              </div>
+              <LocationSearch
+                value={destQuery}
+                onChange={(v) => { setDestQuery(v); setDestPos(null) }}
+                onSelect={(label, pos) => { setDestQuery(label); setDestPos(pos) }}
+                placeholder={t('advisor.inputPlaceholder')}
+                icon={<svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>}
+              />
             </div>
 
             <button

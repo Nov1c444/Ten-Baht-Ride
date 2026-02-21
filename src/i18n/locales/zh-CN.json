@@ -23,19 +23,44 @@
       "description": "最热门的路线。沿Beach Road南行，在Walking Street掉头，沿Second Road北行返回。",
       "priceNote": "全程固定10泰铢"
     },
+    "northPattaya": {
+      "name": "北芭提雅路线",
+      "description": "沿北芭提雅路东西向行驶，连接海豚转盘和素坤逸路。",
+      "priceNote": "标准路线10泰铢"
+    },
+    "centralPattaya": {
+      "name": "中芭提雅路线",
+      "description": "沿中芭提雅路东西向行驶，连接素坤逸路、Second Road和Beach Road。",
+      "priceNote": "标准路线10泰铢"
+    },
+    "southPattaya": {
+      "name": "南芭提雅路线",
+      "description": "沿南芭提雅路从素坤逸路口向Walking Street方向行驶。",
+      "priceNote": "标准路线10泰铢"
+    },
+    "naKluea": {
+      "name": "纳克鲁亚线",
+      "description": "从海豚转盘向北到纳克鲁亚地区，途经Wong Amat海滩和真理寺。",
+      "priceNote": "标准路线10泰铢"
+    },
+    "soiBuakhao": {
+      "name": "Soi Buakhao线",
+      "description": "沿Soi Buakhao从南芭提雅向北行驶，穿过中部娱乐区的热门路线。",
+      "priceNote": "标准路线10泰铢"
+    },
+    "thirdRoad": {
+      "name": "第三路线",
+      "description": "沿第三路（Pattaya Sai 3）行驶，通过内陆道路连接南芭提雅和北部区域。",
+      "priceNote": "标准路线10泰铢"
+    },
     "jomtien": {
       "name": "中天线",
       "description": "连接南芭提雅（Walking Street附近）和中天海滩，适合去海边。",
       "priceNote": "根据距离10-20泰铢"
     },
-    "naklua": {
-      "name": "纳克鲁亚线",
-      "description": "从海豚转盘向北到纳克鲁亚地区，途经Wong Amat海滩和真理寺。",
-      "priceNote": "标准路线10泰铢"
-    },
-    "sukhumvit": {
-      "name": "素坤逸线",
-      "description": "沿素坤逸路从北芭提雅交叉路口向东行驶。",
+    "thepprasit": {
+      "name": "Thepprasit线",
+      "description": "沿Thepprasit路从素坤逸路到夜市区域。仅周五至周日晚间运营。",
       "priceNote": "标准路线10泰铢"
     }
   },
@@ -118,7 +143,9 @@
     "directRoute": "直达",
     "transferRoute": "需换乘",
     "planTrip": "规划路线",
-    "subtitle2": "输入起点和终点，为您推荐最佳双条车路线"
+    "subtitle2": "输入起点和终点，为您推荐最佳双条车路线",
+    "stopResults": "双条车站点",
+    "placesResults": "附近地点"
   },
   "tips": {
     "pressButton": "快到站时按车内的按铃按钮",
