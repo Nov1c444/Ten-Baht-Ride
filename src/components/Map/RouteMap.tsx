@@ -64,103 +64,61 @@ function RoutePolylines({ routes, highlightIds }: { routes: SongthaewRoute[]; hi
   return null
 }
 
+interface TripMarkerDef {
+  position: LatLng
+  label: string
+  title: string
+  color: string
+}
+
 function TripMarkers({
   origin,
   boarding,
   alighting,
   transfer,
+  destination,
 }: {
   origin?: LatLng
   boarding?: LatLng
   alighting?: LatLng
   transfer?: LatLng
+  destination?: LatLng
 }) {
   const map = useMap()
 
   useEffect(() => {
     if (!map) return
-    const markers: google.maps.Marker[] = []
 
-    if (origin) {
-      markers.push(
+    const defs: TripMarkerDef[] = [
+      origin && { position: origin, label: 'O', title: 'Origin', color: '#2563eb' },
+      boarding && { position: boarding, label: 'B', title: 'Board here', color: '#16a34a' },
+      transfer && { position: transfer, label: 'T', title: 'Transfer', color: '#eab308' },
+      alighting && { position: alighting, label: 'A', title: 'Alight here', color: '#dc2626' },
+      destination && { position: destination, label: 'D', title: 'Destination', color: '#7c3aed' },
+    ].filter((d): d is TripMarkerDef => !!d)
+
+    const markers = defs.map(
+      (d) =>
         new google.maps.Marker({
-          position: origin,
+          position: d.position,
           map,
-          title: 'Your location',
-          label: { text: 'O', color: '#fff', fontWeight: 'bold' },
+          title: d.title,
+          label: { text: d.label, color: '#fff', fontWeight: 'bold' },
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 14,
-            fillColor: '#2563eb',
+            fillColor: d.color,
             fillOpacity: 1,
             strokeColor: '#fff',
             strokeWeight: 3,
           },
         }),
-      )
-    }
-
-    if (boarding) {
-      markers.push(
-        new google.maps.Marker({
-          position: boarding,
-          map,
-          title: 'Board here',
-          label: { text: 'B', color: '#fff', fontWeight: 'bold' },
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 14,
-            fillColor: '#16a34a',
-            fillOpacity: 1,
-            strokeColor: '#fff',
-            strokeWeight: 3,
-          },
-        }),
-      )
-    }
-
-    if (transfer) {
-      markers.push(
-        new google.maps.Marker({
-          position: transfer,
-          map,
-          title: 'Transfer here',
-          label: { text: 'T', color: '#fff', fontWeight: 'bold' },
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 14,
-            fillColor: '#eab308',
-            fillOpacity: 1,
-            strokeColor: '#fff',
-            strokeWeight: 3,
-          },
-        }),
-      )
-    }
-
-    if (alighting) {
-      markers.push(
-        new google.maps.Marker({
-          position: alighting,
-          map,
-          title: 'Alight here',
-          label: { text: 'A', color: '#fff', fontWeight: 'bold' },
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 14,
-            fillColor: '#dc2626',
-            fillOpacity: 1,
-            strokeColor: '#fff',
-            strokeWeight: 3,
-          },
-        }),
-      )
-    }
+    )
 
     return () => {
       markers.forEach((m) => m.setMap(null))
     }
-  }, [map, origin, boarding, alighting, transfer])
+  }, [map, origin, boarding, alighting, transfer, destination])
 
   return null
 }
@@ -209,6 +167,7 @@ export default function RouteMap({
   boardingPosition,
   alightingPosition,
   originPosition,
+  destinationPosition,
   transferPosition,
   className = '',
 }: {
@@ -218,6 +177,7 @@ export default function RouteMap({
   boardingPosition?: LatLng
   alightingPosition?: LatLng
   originPosition?: LatLng
+  destinationPosition?: LatLng
   transferPosition?: LatLng
   className?: string
 }) {
@@ -245,8 +205,9 @@ export default function RouteMap({
     if (boardingPosition) pts.push(boardingPosition)
     if (transferPosition) pts.push(transferPosition)
     if (alightingPosition) pts.push(alightingPosition)
+    if (destinationPosition) pts.push(destinationPosition)
     return pts
-  }, [originPosition, boardingPosition, transferPosition, alightingPosition])
+  }, [originPosition, boardingPosition, transferPosition, alightingPosition, destinationPosition])
 
   if (!API_KEY) {
     return (
@@ -272,6 +233,7 @@ export default function RouteMap({
           boarding={boardingPosition}
           alighting={alightingPosition}
           transfer={transferPosition}
+          destination={destinationPosition}
         />
         {fitPoints.length >= 2 && <FitBoundsController points={fitPoints} />}
       </Map>
