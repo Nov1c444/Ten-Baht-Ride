@@ -1,17 +1,14 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useMapsLibrary } from '@vis.gl/react-google-maps'
-import { useTranslation } from 'react-i18next'
-import { bahtBusStops } from '@/data/routes'
 import { PATTAYA_BOUNDS } from '@/utils/geo'
 import type { LatLng } from '@/types'
 
-export interface LocationSuggestion {
+interface Suggestion {
   id: string
   label: string
   sublabel?: string
   position?: LatLng
   placeId?: string
-  source: 'stop' | 'places'
 }
 
 interface LocationSearchProps {
@@ -40,10 +37,8 @@ export default function LocationSearch({
   icon,
   className = '',
 }: LocationSearchProps) {
-  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [localResults, setLocalResults] = useState<LocationSuggestion[]>([])
-  const [placesResults, setPlacesResults] = useState<LocationSuggestion[]>([])
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const hasFocusRef = useRef(false)
@@ -68,27 +63,8 @@ export default function LocationSearch({
   const debouncedQuery = useDebounce(value, 300)
 
   useEffect(() => {
-    if (!debouncedQuery.trim()) {
-      setLocalResults([])
-      return
-    }
-    const q = debouncedQuery.toLowerCase()
-    const matches = bahtBusStops.filter(
-      (stop) => stop.name.toLowerCase().includes(q),
-    )
-      .slice(0, 5)
-      .map((stop) => ({
-        id: `stop-${stop.id}`,
-        label: stop.name,
-        position: stop.position,
-        source: 'stop' as const,
-      }))
-    setLocalResults(matches)
-  }, [debouncedQuery, t])
-
-  useEffect(() => {
     if (!debouncedQuery.trim() || !autocompleteService.current) {
-      setPlacesResults([])
+      setSuggestions([])
       return
     }
 
@@ -101,58 +77,50 @@ export default function LocationSearch({
           east: PATTAYA_BOUNDS.east,
           west: PATTAYA_BOUNDS.west,
         },
-        language: t('common.thb') === 'THB' ? 'en' : undefined,
       },
       (predictions) => {
         if (!predictions) {
-          setPlacesResults([])
+          setSuggestions([])
           return
         }
-        setPlacesResults(
-          predictions.slice(0, 4).map((p) => ({
-            id: `place-${p.place_id}`,
+        setSuggestions(
+          predictions.slice(0, 6).map((p) => ({
+            id: p.place_id,
             label: p.structured_formatting.main_text,
             sublabel: p.structured_formatting.secondary_text,
             placeId: p.place_id,
-            source: 'places' as const,
           })),
         )
       },
     )
-  }, [debouncedQuery, t])
+  }, [debouncedQuery])
 
-  const allSuggestions = useMemo(
-    () => [...localResults, ...placesResults],
-    [localResults, placesResults],
-  )
-
-  // Only auto-open when this input has focus and there are suggestions
   useEffect(() => {
-    if (hasFocusRef.current && allSuggestions.length > 0 && value.trim()) {
+    if (hasFocusRef.current && suggestions.length > 0 && value.trim()) {
       setOpen(true)
-    } else if (allSuggestions.length === 0) {
+    } else if (suggestions.length === 0) {
       setOpen(false)
     }
-  }, [allSuggestions, value])
+  }, [suggestions, value])
 
   useEffect(() => {
     setActiveIndex(-1)
-  }, [allSuggestions])
+  }, [suggestions])
 
   const resolveAndSelect = useCallback(
-    (suggestion: LocationSuggestion) => {
+    (s: Suggestion) => {
       setOpen(false)
 
-      if (suggestion.position) {
-        onSelect(suggestion.label, suggestion.position)
+      if (s.position) {
+        onSelect(s.label, s.position)
         return
       }
 
-      if (suggestion.placeId && geocoder.current) {
-        geocoder.current.geocode({ placeId: suggestion.placeId }, (results, status) => {
+      if (s.placeId && geocoder.current) {
+        geocoder.current.geocode({ placeId: s.placeId }, (results, status) => {
           if (status === 'OK' && results && results[0]) {
             const loc = results[0].geometry.location
-            onSelect(suggestion.label, { lat: loc.lat(), lng: loc.lng() })
+            onSelect(s.label, { lat: loc.lat(), lng: loc.lng() })
           }
         })
       }
@@ -161,17 +129,17 @@ export default function LocationSearch({
   )
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!open || allSuggestions.length === 0) return
+    if (!open || suggestions.length === 0) return
 
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setActiveIndex((prev) => (prev < allSuggestions.length - 1 ? prev + 1 : 0))
+      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0))
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setActiveIndex((prev) => (prev > 0 ? prev - 1 : allSuggestions.length - 1))
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1))
     } else if (e.key === 'Enter' && activeIndex >= 0) {
       e.preventDefault()
-      resolveAndSelect(allSuggestions[activeIndex])
+      resolveAndSelect(suggestions[activeIndex])
     } else if (e.key === 'Escape') {
       setOpen(false)
     }
@@ -200,7 +168,7 @@ export default function LocationSearch({
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => {
             hasFocusRef.current = true
-            if (allSuggestions.length > 0 && value.trim()) setOpen(true)
+            if (suggestions.length > 0 && value.trim()) setOpen(true)
           }}
           onBlur={() => { hasFocusRef.current = false }}
           onKeyDown={handleKeyDown}
@@ -210,59 +178,25 @@ export default function LocationSearch({
         />
       </div>
 
-      {open && allSuggestions.length > 0 && (
+      {open && suggestions.length > 0 && (
         <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden max-h-64 overflow-y-auto">
-          {localResults.length > 0 && (
-            <>
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
-                {t('advisor.stopResults')}
+          {suggestions.map((s, i) => (
+            <button
+              key={s.id}
+              onMouseDown={(e) => { e.preventDefault(); resolveAndSelect(s) }}
+              onMouseEnter={() => setActiveIndex(i)}
+              className={`w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors ${activeIndex === i ? 'bg-primary-50' : 'hover:bg-gray-50'}`}
+            >
+              <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900 truncate">{s.label}</p>
+                {s.sublabel && <p className="text-xs text-gray-400 truncate">{s.sublabel}</p>}
               </div>
-              {localResults.map((s, i) => (
-                <button
-                  key={s.id}
-                  onMouseDown={(e) => { e.preventDefault(); resolveAndSelect(s) }}
-                  onMouseEnter={() => setActiveIndex(i)}
-                  className={`w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors ${activeIndex === i ? 'bg-primary-50' : 'hover:bg-gray-50'}`}
-                >
-                  <svg className="w-4 h-4 text-primary-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <div className="min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{s.label}</p>
-                    {s.sublabel && <p className="text-xs text-gray-400 truncate">{s.sublabel}</p>}
-                  </div>
-                </button>
-              ))}
-            </>
-          )}
-
-          {placesResults.length > 0 && (
-            <>
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider bg-gray-50 border-t border-gray-100">
-                {t('advisor.placesResults')}
-              </div>
-              {placesResults.map((s, rawIdx) => {
-                const idx = localResults.length + rawIdx
-                return (
-                  <button
-                    key={s.id}
-                    onMouseDown={(e) => { e.preventDefault(); resolveAndSelect(s) }}
-                    onMouseEnter={() => setActiveIndex(idx)}
-                    className={`w-full text-left px-3 py-2 flex items-center gap-2.5 text-sm transition-colors ${activeIndex === idx ? 'bg-primary-50' : 'hover:bg-gray-50'}`}
-                  >
-                    <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <div className="min-w-0">
-                      <p className="font-medium text-gray-900 truncate">{s.label}</p>
-                      {s.sublabel && <p className="text-xs text-gray-400 truncate">{s.sublabel}</p>}
-                    </div>
-                  </button>
-                )
-              })}
-            </>
-          )}
+            </button>
+          ))}
         </div>
       )}
     </div>
