@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import { routes } from '@/data/routes'
 import { planTrip } from '@/utils/geo'
 import type { TripAdvice, LatLng } from '@/types'
@@ -20,7 +21,75 @@ const POPULAR_ORIGINS = [
   { label: 'Sukhumvit (Central Pattaya Rd)', position: { lat: 12.9365228, lng: 100.8869766 } },
 ]
 
+const googleMapsUrl = (pos: LatLng) =>
+  `https://www.google.com/maps/search/?api=1&query=${pos.lat},${pos.lng}`
+
+function StopLink({ name, position }: { name: string; position: LatLng }) {
+  const { t } = useTranslation()
+  return (
+    <a
+      href={googleMapsUrl(position)}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={t('advisor.openInMaps')}
+      className="font-medium text-gray-900 text-sm hover:text-primary-600 inline-flex items-center gap-1 transition-colors group"
+    >
+      {name}
+      <svg className="w-3 h-3 text-gray-400 group-hover:text-primary-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg>
+    </a>
+  )
+}
+
 type GeoStatus = 'idle' | 'loading' | 'success' | 'denied' | 'unavailable'
+
+function useWalkingDistances(trip: TripAdvice | null) {
+  const routesLib = useMapsLibrary('routes')
+  const directionsService = useRef<google.maps.DirectionsService | null>(null)
+  const [resolved, setResolved] = useState<{ toBoard?: number; fromAlight?: number }>({})
+  const requestId = useRef(0)
+
+  useEffect(() => {
+    if (routesLib && !directionsService.current) {
+      directionsService.current = new routesLib.DirectionsService()
+    }
+  }, [routesLib])
+
+  useEffect(() => {
+    const id = ++requestId.current
+    if (!trip || !directionsService.current) return
+
+    const ds = directionsService.current
+    const firstSeg = trip.segments[0]
+    const lastSeg = trip.segments[trip.segments.length - 1]
+
+    Promise.allSettled([
+      ds.route({
+        origin: trip.originPosition,
+        destination: firstSeg.boardingStop.position,
+        travelMode: google.maps.TravelMode.WALKING,
+      }),
+      ds.route({
+        origin: lastSeg.alightingStop.position,
+        destination: trip.destinationPosition,
+        travelMode: google.maps.TravelMode.WALKING,
+      }),
+    ]).then(([boardResult, alightResult]) => {
+      if (requestId.current !== id) return
+      setResolved({
+        toBoard: boardResult.status === 'fulfilled'
+          ? boardResult.value.routes[0]?.legs[0]?.distance?.value
+          : undefined,
+        fromAlight: alightResult.status === 'fulfilled'
+          ? alightResult.value.routes[0]?.legs[0]?.distance?.value
+          : undefined,
+      })
+    })
+  }, [trip])
+
+  return trip ? resolved : {}
+}
 
 export default function AdvisorPage() {
   const { t } = useTranslation()
@@ -32,6 +101,10 @@ export default function AdvisorPage() {
   const [geoStatus, setGeoStatus] = useState<GeoStatus>('idle')
   const [trip, setTrip] = useState<TripAdvice | null>(null)
   const [searched, setSearched] = useState(false)
+
+  const walkDistances = useWalkingDistances(trip)
+  const walkToBoard = walkDistances.toBoard ?? trip?.walkToBoard ?? 0
+  const walkFromAlight = walkDistances.fromAlight ?? trip?.walkFromAlight ?? 0
 
   const handleLocate = useCallback(() => {
     if (!navigator.geolocation) {
@@ -100,7 +173,6 @@ export default function AdvisorPage() {
       {/* Search panel */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* Origin */}
           <div>
             <label className="text-xs font-medium text-gray-500 mb-1 block">{t('advisor.originLabel')}</label>
             <div className="flex gap-2">
@@ -128,7 +200,6 @@ export default function AdvisorPage() {
             {geoStatus === 'unavailable' && <p className="text-xs text-red-500 mt-1">{t('advisor.locationUnavailable')}</p>}
           </div>
 
-          {/* Destination */}
           <div>
             <label className="text-xs font-medium text-gray-500 mb-1 block">{t('advisor.destinationLabel')}</label>
             <LocationSearch
@@ -153,7 +224,7 @@ export default function AdvisorPage() {
         )}
       </div>
 
-      {/* Quick picks (before search) */}
+      {/* Quick picks */}
       {!searched && (
         <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
           <div>
@@ -187,7 +258,7 @@ export default function AdvisorPage() {
         </div>
       )}
 
-      {/* Map — always visible, full width */}
+      {/* Map */}
       <RouteMap
         routes={routes}
         highlightRouteIds={highlightRouteIds}
@@ -199,15 +270,15 @@ export default function AdvisorPage() {
         className="h-[300px] sm:h-[450px] lg:h-[500px]"
       />
 
-      {/* Map legend when trip is active */}
+      {/* Map legend */}
       {searched && trip && (
         <div className="flex flex-wrap gap-3 text-xs text-gray-500">
           {[
-            { label: 'O', desc: 'Origin', color: '#2563eb' },
+            { label: 'O', desc: t('advisor.originPoint'), color: '#2563eb' },
             { label: 'B', desc: t('advisor.boardAt'), color: '#16a34a' },
             ...(transferPos ? [{ label: 'T', desc: t('advisor.transferAt'), color: '#eab308' }] : []),
             { label: 'A', desc: t('advisor.alightAt'), color: '#dc2626' },
-            { label: 'D', desc: 'Destination', color: '#7c3aed' },
+            { label: 'D', desc: t('advisor.destinationPoint'), color: '#7c3aed' },
           ].map((m) => (
             <span key={m.label} className="flex items-center gap-1.5">
               <span
@@ -239,14 +310,17 @@ export default function AdvisorPage() {
             </div>
 
             <div className="p-4 space-y-0">
-              {trip.walkToBoard > 0 && (
+              {walkToBoard > 0 && (
                 <div className="flex items-center gap-3 text-xs text-gray-400 py-1.5">
                   <div className="w-8 flex justify-center">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
-                  <span>{t('advisor.walkDistance', { distance: trip.walkToBoard })}</span>
+                  <span>
+                    {t('advisor.walkDistance', { distance: walkToBoard })}
+                    {!walkDistances.toBoard && <span className="text-gray-300 ml-1">~</span>}
+                  </span>
                 </div>
               )}
 
@@ -262,7 +336,7 @@ export default function AdvisorPage() {
                       <p className="text-xs text-gray-500">
                         {idx === 0 ? t('advisor.boardAt') : t('advisor.transferAt')}
                       </p>
-                      <p className="font-medium text-gray-900 text-sm">{segment.boardingStop.name}</p>
+                      <StopLink name={segment.boardingStop.name} position={segment.boardingStop.position} />
                     </div>
                   </div>
 
@@ -286,21 +360,24 @@ export default function AdvisorPage() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">{t('advisor.alightAt')}</p>
-                        <p className="font-medium text-gray-900 text-sm">{segment.alightingStop.name}</p>
+                        <StopLink name={segment.alightingStop.name} position={segment.alightingStop.position} />
                       </div>
                     </div>
                   )}
                 </div>
               ))}
 
-              {trip.walkFromAlight > 0 && (
+              {walkFromAlight > 0 && (
                 <div className="flex items-center gap-3 text-xs text-gray-400 py-1.5">
                   <div className="w-8 flex justify-center">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
-                  <span>{t('advisor.walkDistance', { distance: trip.walkFromAlight })}</span>
+                  <span>
+                    {t('advisor.walkDistance', { distance: walkFromAlight })}
+                    {!walkDistances.fromAlight && <span className="text-gray-300 ml-1">~</span>}
+                  </span>
                 </div>
               )}
             </div>

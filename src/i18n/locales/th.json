@@ -146,7 +146,10 @@
     "subtitle2": "ป้อนจุดเริ่มต้นและจุดหมายเพื่อหาเส้นทางรถสองแถวที่ดีที่สุด",
     "stopResults": "จุดจอดรถสองแถว",
     "placesResults": "สถานที่ใกล้เคียง",
-    "selectFromList": "กรุณาเลือกสถานที่จากรายการแนะนำ"
+    "selectFromList": "กรุณาเลือกสถานที่จากรายการแนะนำ",
+    "originPoint": "ต้นทาง",
+    "destinationPoint": "ปลายทาง",
+    "openInMaps": "เปิดใน Google Maps"
   },
   "tips": {
     "pressButton": "กดกริ่งเมื่อใกล้ถึงจุดหมาย",

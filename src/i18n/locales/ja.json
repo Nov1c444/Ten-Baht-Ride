@@ -146,7 +146,10 @@
     "subtitle2": "出発地と目的地を入力して、最適なソンテウルートをお探しします",
     "stopResults": "ソンテウ停留所",
     "placesResults": "周辺スポット",
-    "selectFromList": "候補リストから場所を選択してください"
+    "selectFromList": "候補リストから場所を選択してください",
+    "originPoint": "出発地",
+    "destinationPoint": "目的地",
+    "openInMaps": "Google マップで開く"
   },
   "tips": {
     "pressButton": "停留所に近づいたら車内のブザーボタンを押してください",

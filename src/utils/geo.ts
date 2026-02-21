@@ -51,7 +51,6 @@ const findNearestBahtBusStop = (position: LatLng): { stop: BahtBusStop; distance
     { stop: bahtBusStops[0], distance: Infinity },
   )
 
-// Find the nearest baht bus stop that is also close to a given route path
 const findNearestStopOnRoute = (
   position: LatLng,
   routePath: LatLng[],
@@ -70,36 +69,38 @@ const findNearestStopOnRoute = (
 }
 
 const DEFAULT_TIP_KEYS = ['tips.pressButton', 'tips.haveChange', 'tips.payWhenExit', 'tips.checkDirection']
-const MAX_WALKING_DISTANCE = 2000
+
+// Street walking is ~1.4x straight-line distance in urban grids.
+const WALKING_FACTOR = 1.4
+
+// Max realistic walking for tourists in Pattaya heat (street distance).
+const MAX_WALKING_DISTANCE = 1000
+
+const TRANSFER_PENALTY_METERS = 400
 const TRANSFER_PROXIMITY = 500
+
+interface RouteEval {
+  pathWalk: number
+  stop: BahtBusStop
+}
 
 const evaluateRouteForPosition = (
   position: LatLng,
   route: SongthaewRoute,
-): { walkDistance: number; stop: BahtBusStop; reachable: boolean } | null => {
+): RouteEval | null => {
   const pathDist = distanceToPath(position, route.path)
-  if (pathDist > MAX_WALKING_DISTANCE) return null
+  const estimatedWalk = Math.round(pathDist * WALKING_FACTOR)
+  if (estimatedWalk > MAX_WALKING_DISTANCE) return null
 
-  // Try to find a named stop near this route for the user
   const stopOnRoute = findNearestStopOnRoute(position, route.path)
   if (stopOnRoute) {
-    return {
-      walkDistance: Math.round(Math.min(pathDist, stopOnRoute.walkDistance)),
-      stop: stopOnRoute.stop,
-      reachable: true,
-    }
+    return { pathWalk: estimatedWalk, stop: stopOnRoute.stop }
   }
 
-  // Fallback: use nearest global stop as reference landmark
   const nearest = findNearestBahtBusStop(position)
-  return {
-    walkDistance: Math.round(pathDist),
-    stop: nearest.stop,
-    reachable: true,
-  }
+  return { pathWalk: estimatedWalk, stop: nearest.stop }
 }
 
-// Convert BahtBusStop to RouteStop-like shape for TripSegment compatibility
 const toRouteStop = (stop: BahtBusStop) => ({
   id: stop.id,
   name: stop.name,
@@ -131,8 +132,8 @@ const buildDirectCandidates = (
       return {
         segments: [segment],
         totalPrice: route.price,
-        walkToBoard: boarding.walkDistance,
-        walkFromAlight: alighting.walkDistance,
+        walkToBoard: boarding.pathWalk,
+        walkFromAlight: alighting.pathWalk,
         originPosition: origin,
         destinationPosition: destination,
         tipKeys: DEFAULT_TIP_KEYS,
@@ -140,7 +141,6 @@ const buildDirectCandidates = (
     })
     .filter((c): c is TripAdvice => c !== null)
 
-// Two routes share a transfer zone if any bahtBusStop is near both paths
 const findTransferStops = (
   routeA: SongthaewRoute,
   routeB: SongthaewRoute,
@@ -196,8 +196,8 @@ const buildTransferCandidates = (
           options.push({
             segments: [seg1, seg2],
             totalPrice: first.price + second.price,
-            walkToBoard: boarding.walkDistance,
-            walkFromAlight: alighting.walkDistance,
+            walkToBoard: boarding.pathWalk,
+            walkFromAlight: alighting.pathWalk,
             originPosition: origin,
             destinationPosition: destination,
             tipKeys: DEFAULT_TIP_KEYS,
@@ -208,6 +208,11 @@ const buildTransferCandidates = (
     }),
   )
 
+// Rank by total "cost" = walking distance + transfer penalty.
+// This means a transfer that saves >400m walking beats a direct route.
+const tripCost = (t: TripAdvice) =>
+  t.walkToBoard + t.walkFromAlight + (t.segments.length - 1) * TRANSFER_PENALTY_METERS
+
 export const planTrip = (
   origin: LatLng,
   destination: LatLng,
@@ -216,11 +221,7 @@ export const planTrip = (
   const directs = buildDirectCandidates(origin, destination, routes)
   const transfers = buildTransferCandidates(origin, destination, routes)
 
-  const all = [
-    ...directs.map((c) => ({ ...c, priority: 0 })),
-    ...transfers.map((c) => ({ ...c, priority: 1 })),
-  ].sort((a, b) => a.priority - b.priority || (a.walkToBoard + a.walkFromAlight) - (b.walkToBoard + b.walkFromAlight))
-
+  const all = [...directs, ...transfers].sort((a, b) => tripCost(a) - tripCost(b))
   return all[0] ?? null
 }
 

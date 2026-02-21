@@ -146,7 +146,10 @@
     "subtitle2": "출발지와 도착지를 입력하면 최적의 쏭태우 노선을 찾아드립니다",
     "stopResults": "쏭태우 정류장",
     "placesResults": "주변 장소",
-    "selectFromList": "제안 목록에서 위치를 선택해주세요"
+    "selectFromList": "제안 목록에서 위치를 선택해주세요",
+    "originPoint": "출발지",
+    "destinationPoint": "목적지",
+    "openInMaps": "Google 지도에서 열기"
   },
   "tips": {
     "pressButton": "정류장에 가까워지면 차내 벨 버튼을 누르세요",
