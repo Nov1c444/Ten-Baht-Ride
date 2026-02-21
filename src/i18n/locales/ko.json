@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "텐바트라이드",
+    "subtitle": "파타야 쏭태우 가이드",
+    "description": "파타야의 상징적인 10바트 쏭태우 노선 인터랙티브 가이드"
+  },
+  "nav": {
+    "routes": "노선",
+    "advisor": "탑승 도우미",
+    "about": "소개"
+  },
+  "routes": {
+    "title": "쏭태우 노선",
+    "selectRoute": "지도에서 볼 노선을 선택하세요",
+    "allRoutes": "전체 노선",
+    "operatingHours": "운행 시간",
+    "frequency": "배차 간격",
+    "price": "요금",
+    "stops": "정류장",
+    "mainStops": "주요 정류장",
+    "circular": {
+      "name": "순환 노선",
+      "description": "가장 인기 있는 노선. 비치로드를 따라 남쪽으로, 워킹스트리트에서 회전, 세컨드로드를 따라 북쪽으로 돌아옵니다.",
+      "priceNote": "노선 어디서나 10바트"
+    },
+    "jomtien": {
+      "name": "좀티엔 노선",
+      "description": "사우스 파타야(워킹스트리트 근처)에서 좀티엔 비치를 연결합니다. 해변 방문에 적합합니다.",
+      "priceNote": "거리에 따라 10-20바트"
+    },
+    "naklua": {
+      "name": "나클루아 노선",
+      "description": "돌핀 로터리에서 북쪽 나클루아 지역까지, 웡아맛 비치와 진리의 성전을 지나갑니다.",
+      "priceNote": "기본 노선 10바트"
+    },
+    "sukhumvit": {
+      "name": "수쿰빗 노선",
+      "description": "노스 파타야 교차로에서 동쪽으로 수쿰빗 로드를 따라 운행합니다.",
+      "priceNote": "기본 노선 10바트"
+    }
+  },
+  "stops": {
+    "dolphinRoundabout": "돌핀 로터리",
+    "centralPattayaBeach": "센트럴 파타야 비치",
+    "royalGardenPlaza": "로얄 가든 플라자",
+    "beachRoadSoi13": "비치로드 소이 13/14",
+    "walkingStreet": "워킹 스트리트",
+    "walkingStreetTurn": "워킹 스트리트 (회전)",
+    "southPattayaSecondRoad": "사우스 파타야 - 세컨드로드",
+    "tukCom": "Tuk Com (IT 몰)",
+    "centralFestival": "센트럴 페스티벌",
+    "bigCExtra": "빅씨 엑스트라",
+    "northPattaya": "노스 파타야",
+    "southPattayaWalkingStreet": "사우스 파타야 / 워킹스트리트",
+    "pratumnakHill": "프라탐낙 힐",
+    "jomtienBeachNorth": "좀티엔 비치 (북쪽)",
+    "jomtienBeachCentral": "좀티엔 비치 (중앙)",
+    "jomtienBeachSouth": "좀티엔 비치 (남쪽)",
+    "jomtienNightMarket": "좀티엔 야시장",
+    "wongamatBeach": "웡아맛 비치",
+    "sanctuaryOfTruth": "진리의 성전",
+    "nakluaMarket": "나클루아 시장",
+    "nakluaSoi18": "나클루아 소이 18",
+    "northPattayaRoad": "노스 파타야 로드",
+    "tescoLotus": "테스코 로터스",
+    "sukhumvitSoi51": "수쿰빗 소이 51",
+    "highwayIntersection": "고속도로 교차로"
+  },
+  "landmarks": {
+    "dolphinRoundabout": "돌핀 로터리 분수",
+    "centralPattayaBeach": "센트럴 파타야 비치 지역",
+    "royalGardenPlaza": "로얄 가든 플라자 쇼핑몰",
+    "walkingStreet": "워킹 스트리트 입구",
+    "tukCom": "Tuk Com IT 몰",
+    "centralFestival": "센트럴 페스티벌 파타야 비치",
+    "bigCExtra": "빅씨 엑스트라 슈퍼마켓",
+    "northPattaya": "노스 파타야 지역",
+    "pratumnakHill": "프라탐낙 힐 전망대",
+    "jomtienBeachNorth": "좀티엔 비치 북쪽 입구",
+    "jomtienBeachCentral": "좀티엔 비치 중앙 지역",
+    "jomtienBeachSouth": "좀티엔 비치 남쪽 끝",
+    "jomtienNightMarket": "좀티엔 야시장",
+    "wongamatBeach": "웡아맛 비치 지역",
+    "sanctuaryOfTruth": "진리의 성전",
+    "nakluaMarket": "나클루아 해산물 시장",
+    "nakluaSoi18": "나클루아 소이 18",
+    "northPattayaRoad": "노스 파타야 로드 교차로",
+    "tescoLotus": "테스코 로터스 파타야",
+    "highwayIntersection": "7번 고속도로 교차로"
+  },
+  "advisor": {
+    "title": "탑승 도우미",
+    "subtitle": "목적지를 입력하면 최적의 쏭태우 노선을 찾아드립니다",
+    "inputPlaceholder": "목적지 입력 (호텔, 쇼핑몰, 관광지...)",
+    "searchButton": "노선 찾기",
+    "searching": "검색 중...",
+    "results": "추천 노선",
+    "noResults": "이 목적지에 적합한 쏭태우 노선을 찾지 못했습니다. 택시나 오토바이 택시를 이용하세요.",
+    "boardAt": "탑승 장소",
+    "alightAt": "하차 장소",
+    "estimatedPrice": "예상 요금",
+    "tips": "팁",
+    "noApiKey": "Google Maps API 키가 설정되지 않았습니다. 수동 검색 모드를 사용합니다.",
+    "popularDestinations": "인기 목적지",
+    "trySearching": "이 인기 목적지를 검색해 보세요:"
+  },
+  "tips": {
+    "pressButton": "정류장에 가까워지면 차내 벨 버튼을 누르세요",
+    "haveChange": "잔돈을 준비하세요 (20바트 지폐가 이상적)",
+    "payWhenExit": "탑승할 때가 아니라 내릴 때 요금을 지불하세요",
+    "waveToStop": "지나가는 쏭태우에 손을 흔들어 세우세요",
+    "checkDirection": "쏭태우가 원하는 방향으로 가는지 확인하세요",
+    "nightPrice": "야간 탑승은 더 비쌀 수 있습니다 (오후 10시 이후)",
+    "charterPrice": "혼자 탑승하면 기사가 전세 요금을 부를 수 있으니 가격을 협상하세요",
+    "beachRoadSouth": "비치로드에서 쏭태우는 남쪽으로만 갑니다 (워킹스트리트 방향)",
+    "secondRoadNorth": "세컨드로드에서 쏭태우는 북쪽으로만 갑니다 (돌핀 로터리 방향)"
+  },
+  "about": {
+    "title": "텐바트라이드 소개",
+    "whatIs": "쏭태우란?",
+    "whatIsDesc": "쏭태우(สองแถว, '두 줄'이라는 뜻)는 뒤에 두 줄의 벤치 좌석이 있는 개조된 픽업 트럭입니다. 파타야에서 가장 흔하고 저렴한 대중교통으로, 고정 노선 요금은 단 10바트(약 400원)입니다.",
+    "howToRide": "탑승 방법",
+    "howToRideSteps": [
+      "도로변에 서서 같은 방향으로 가는 쏭태우에 손을 흔드세요",
+      "뒤에 올라타세요 — 기사에게 정류장을 말할 필요 없습니다",
+      "목적지에 가까워지면 차내 벨 버튼을 누르세요",
+      "내린 후 기사 창문으로 가서 10바트를 지불하세요",
+      "끝입니다! 표도 앱도 필요 없이 타고 내리면 됩니다"
+    ],
+    "disclaimer": "노선 및 요금 정보는 참고용입니다. 실제 노선과 요금은 다를 수 있습니다."
+  },
+  "common": {
+    "thb": "바트",
+    "baht": "바트",
+    "loading": "로딩 중...",
+    "error": "문제가 발생했습니다",
+    "close": "닫기",
+    "back": "뒤로",
+    "viewOnMap": "지도에서 보기",
+    "perPerson": "1인당"
+  }
+}

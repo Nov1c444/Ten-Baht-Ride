@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "十铢车",
+    "subtitle": "芭提雅双条车乘车指南",
+    "description": "芭提雅标志性10泰铢双条车路线互动指南"
+  },
+  "nav": {
+    "routes": "路线",
+    "advisor": "乘车助手",
+    "about": "关于"
+  },
+  "routes": {
+    "title": "双条车路线",
+    "selectRoute": "选择路线在地图上查看",
+    "allRoutes": "所有路线",
+    "operatingHours": "运营时间",
+    "frequency": "发车频率",
+    "price": "票价",
+    "stops": "站点",
+    "mainStops": "主要站点",
+    "circular": {
+      "name": "环线",
+      "description": "最热门的路线。沿Beach Road南行，在Walking Street掉头，沿Second Road北行返回。",
+      "priceNote": "全程固定10泰铢"
+    },
+    "jomtien": {
+      "name": "中天线",
+      "description": "连接南芭提雅（Walking Street附近）和中天海滩，适合去海边。",
+      "priceNote": "根据距离10-20泰铢"
+    },
+    "naklua": {
+      "name": "纳克鲁亚线",
+      "description": "从海豚转盘向北到纳克鲁亚地区，途经Wong Amat海滩和真理寺。",
+      "priceNote": "标准路线10泰铢"
+    },
+    "sukhumvit": {
+      "name": "素坤逸线",
+      "description": "沿素坤逸路从北芭提雅交叉路口向东行驶。",
+      "priceNote": "标准路线10泰铢"
+    }
+  },
+  "stops": {
+    "dolphinRoundabout": "海豚转盘",
+    "centralPattayaBeach": "中央芭提雅海滩",
+    "royalGardenPlaza": "皇家花园广场",
+    "beachRoadSoi13": "Beach Road 13/14巷",
+    "walkingStreet": "步行街",
+    "walkingStreetTurn": "步行街（掉头点）",
+    "southPattayaSecondRoad": "南芭提雅 - Second Road",
+    "tukCom": "Tuk Com（IT商城）",
+    "centralFestival": "尚泰购物中心",
+    "bigCExtra": "Big C Extra超市",
+    "northPattaya": "北芭提雅",
+    "southPattayaWalkingStreet": "南芭提雅 / 步行街",
+    "pratumnakHill": "帕塔纳克山",
+    "jomtienBeachNorth": "中天海滩（北段）",
+    "jomtienBeachCentral": "中天海滩（中段）",
+    "jomtienBeachSouth": "中天海滩（南段）",
+    "jomtienNightMarket": "中天夜市",
+    "wongamatBeach": "Wong Amat海滩",
+    "sanctuaryOfTruth": "真理寺",
+    "nakluaMarket": "纳克鲁亚市场",
+    "nakluaSoi18": "纳克鲁亚18巷",
+    "northPattayaRoad": "北芭提雅路",
+    "tescoLotus": "Tesco Lotus",
+    "sukhumvitSoi51": "素坤逸51巷",
+    "highwayIntersection": "高速路口"
+  },
+  "landmarks": {
+    "dolphinRoundabout": "海豚转盘喷泉",
+    "centralPattayaBeach": "中央芭提雅海滩区域",
+    "royalGardenPlaza": "皇家花园广场购物中心",
+    "walkingStreet": "步行街入口",
+    "tukCom": "Tuk Com IT商城",
+    "centralFestival": "尚泰购物中心",
+    "bigCExtra": "Big C Extra超市",
+    "northPattaya": "北芭提雅区域",
+    "pratumnakHill": "帕塔纳克山观景台",
+    "jomtienBeachNorth": "中天海滩北入口",
+    "jomtienBeachCentral": "中天海滩中段",
+    "jomtienBeachSouth": "中天海滩南端",
+    "jomtienNightMarket": "中天夜市",
+    "wongamatBeach": "Wong Amat海滩区域",
+    "sanctuaryOfTruth": "真理寺",
+    "nakluaMarket": "纳克鲁亚海鲜市场",
+    "nakluaSoi18": "纳克鲁亚18巷",
+    "northPattayaRoad": "北芭提雅路口",
+    "tescoLotus": "Tesco Lotus芭提雅店",
+    "highwayIntersection": "7号高速路口"
+  },
+  "advisor": {
+    "title": "乘车助手",
+    "subtitle": "输入目的地，我们为您推荐最佳双条车路线",
+    "inputPlaceholder": "输入目的地（酒店、商场、景点...）",
+    "searchButton": "查找路线",
+    "searching": "搜索中...",
+    "results": "推荐路线",
+    "noResults": "未找到适合该目的地的双条车路线。建议乘坐出租车或摩托车。",
+    "boardAt": "上车地点",
+    "alightAt": "下车地点",
+    "estimatedPrice": "预计票价",
+    "tips": "小贴士",
+    "noApiKey": "未配置Google Maps API密钥，使用手动搜索模式。",
+    "popularDestinations": "热门目的地",
+    "trySearching": "试试搜索这些热门目的地："
+  },
+  "tips": {
+    "pressButton": "快到站时按车内的按铃按钮",
+    "haveChange": "准备好零钱（20泰铢纸币最方便）",
+    "payWhenExit": "下车时付钱给司机，不是上车时",
+    "waveToStop": "在路边挥手示意拦停双条车",
+    "checkDirection": "确认双条车行驶方向与你一致",
+    "nightPrice": "深夜乘车可能更贵（晚上10点后）",
+    "charterPrice": "如果只有你一个乘客，司机可能会按包车价收费，记得协商价格",
+    "beachRoadSouth": "Beach Road上的双条车只往南走（朝步行街方向）",
+    "secondRoadNorth": "Second Road上的双条车只往北走（朝海豚转盘方向）"
+  },
+  "about": {
+    "title": "关于十铢车",
+    "whatIs": "什么是双条车？",
+    "whatIsDesc": "双条车（สองแถว，字面意思是'两排'）是改装的皮卡车，后面有两排长凳座椅。它是芭提雅最常见、最便宜的公共交通工具，固定路线仅需10泰铢（约2元人民币）。",
+    "howToRide": "怎么坐双条车",
+    "howToRideSteps": [
+      "站在路边，向驶来的同方向双条车挥手示意",
+      "直接跳上车尾 — 无需告诉司机你去哪里",
+      "快到目的地时，按车内的按铃按钮",
+      "下车后，走到司机窗口付10泰铢",
+      "就这么简单！不需要买票，不需要APP，上车就走"
+    ],
+    "disclaimer": "路线和价格信息仅供参考，实际运营路线和票价可能有所变动。"
+  },
+  "common": {
+    "thb": "泰铢",
+    "baht": "铢",
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "close": "关闭",
+    "back": "返回",
+    "viewOnMap": "在地图上查看",
+    "perPerson": "每人"
+  }
+}

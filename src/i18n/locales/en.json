@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "Ten Baht Ride",
+    "subtitle": "Pattaya Songthaew Guide",
+    "description": "Your interactive guide to Pattaya's iconic 10-baht songthaew routes"
+  },
+  "nav": {
+    "routes": "Routes",
+    "advisor": "Ride Advisor",
+    "about": "About"
+  },
+  "routes": {
+    "title": "Songthaew Routes",
+    "selectRoute": "Select a route to view on map",
+    "allRoutes": "All Routes",
+    "operatingHours": "Operating Hours",
+    "frequency": "Frequency",
+    "price": "Price",
+    "stops": "Stops",
+    "mainStops": "Main Stops",
+    "circular": {
+      "name": "Circular Route",
+      "description": "The most popular route. Runs south along Beach Road, loops at Walking Street, then returns north along Second Road.",
+      "priceNote": "Fixed 10 THB anywhere along the route"
+    },
+    "jomtien": {
+      "name": "Jomtien Route",
+      "description": "Connects South Pattaya (Walking Street area) to Jomtien Beach. Great for beach-goers.",
+      "priceNote": "10-20 THB depending on distance"
+    },
+    "naklua": {
+      "name": "Naklua Route",
+      "description": "Runs from Dolphin Roundabout north to Naklua area, passing Wongamat Beach and Sanctuary of Truth.",
+      "priceNote": "10 THB for the standard route"
+    },
+    "sukhumvit": {
+      "name": "Sukhumvit Route",
+      "description": "Runs along Sukhumvit Road from North Pattaya intersection heading east.",
+      "priceNote": "10 THB for the standard route"
+    }
+  },
+  "stops": {
+    "dolphinRoundabout": "Dolphin Roundabout",
+    "centralPattayaBeach": "Central Pattaya Beach",
+    "royalGardenPlaza": "Royal Garden Plaza",
+    "beachRoadSoi13": "Beach Road Soi 13/14",
+    "walkingStreet": "Walking Street",
+    "walkingStreetTurn": "Walking Street (Turn)",
+    "southPattayaSecondRoad": "South Pattaya - Second Road",
+    "tukCom": "Tuk Com (IT Mall)",
+    "centralFestival": "Central Festival",
+    "bigCExtra": "Big C Extra",
+    "northPattaya": "North Pattaya",
+    "southPattayaWalkingStreet": "South Pattaya / Walking Street",
+    "pratumnakHill": "Pratumnak Hill",
+    "jomtienBeachNorth": "Jomtien Beach (North)",
+    "jomtienBeachCentral": "Jomtien Beach (Central)",
+    "jomtienBeachSouth": "Jomtien Beach (South)",
+    "jomtienNightMarket": "Jomtien Night Market",
+    "wongamatBeach": "Wongamat Beach",
+    "sanctuaryOfTruth": "Sanctuary of Truth",
+    "nakluaMarket": "Naklua Market",
+    "nakluaSoi18": "Naklua Soi 18",
+    "northPattayaRoad": "North Pattaya Road",
+    "tescoLotus": "Tesco Lotus",
+    "sukhumvitSoi51": "Sukhumvit Soi 51",
+    "highwayIntersection": "Highway Intersection"
+  },
+  "landmarks": {
+    "dolphinRoundabout": "Dolphin Roundabout fountain",
+    "centralPattayaBeach": "Central Pattaya Beach area",
+    "royalGardenPlaza": "Royal Garden Plaza shopping mall",
+    "walkingStreet": "Walking Street entrance",
+    "tukCom": "Tuk Com IT Mall",
+    "centralFestival": "Central Festival Pattaya Beach",
+    "bigCExtra": "Big C Extra supermarket",
+    "northPattaya": "North Pattaya area",
+    "pratumnakHill": "Pratumnak Hill viewpoint area",
+    "jomtienBeachNorth": "Jomtien Beach north entrance",
+    "jomtienBeachCentral": "Jomtien Beach central area",
+    "jomtienBeachSouth": "Jomtien Beach south end",
+    "jomtienNightMarket": "Jomtien Night Market",
+    "wongamatBeach": "Wongamat Beach area",
+    "sanctuaryOfTruth": "Sanctuary of Truth temple",
+    "nakluaMarket": "Naklua seafood market",
+    "nakluaSoi18": "Naklua Soi 18",
+    "northPattayaRoad": "North Pattaya Road intersection",
+    "tescoLotus": "Tesco Lotus Pattaya",
+    "highwayIntersection": "Highway 7 intersection"
+  },
+  "advisor": {
+    "title": "Ride Advisor",
+    "subtitle": "Enter your destination and we'll find the best songthaew route for you",
+    "inputPlaceholder": "Enter destination (hotel, mall, landmark...)",
+    "searchButton": "Find Route",
+    "searching": "Searching...",
+    "results": "Recommended Route",
+    "noResults": "No suitable songthaew route found for this destination. Consider taking a taxi or motorbike taxi.",
+    "boardAt": "Board at",
+    "alightAt": "Alight at",
+    "estimatedPrice": "Estimated Price",
+    "tips": "Tips",
+    "noApiKey": "Google Maps API key is not configured. Using manual search mode.",
+    "popularDestinations": "Popular Destinations",
+    "trySearching": "Try searching for these popular destinations:"
+  },
+  "tips": {
+    "pressButton": "Press the buzzer/bell button when approaching your stop",
+    "haveChange": "Have small bills ready (20 THB notes ideal)",
+    "payWhenExit": "Pay the driver when you get off, not when boarding",
+    "waveToStop": "Wave your hand to flag down a passing songthaew",
+    "checkDirection": "Make sure the songthaew is heading in your direction",
+    "nightPrice": "Late night rides may cost more (after 10 PM)",
+    "charterPrice": "If you're the only passenger, the driver may try to charter - negotiate the price",
+    "beachRoadSouth": "On Beach Road, songthaews only go south (toward Walking Street)",
+    "secondRoadNorth": "On Second Road, songthaews only go north (toward Dolphin Roundabout)"
+  },
+  "about": {
+    "title": "About Ten Baht Ride",
+    "whatIs": "What is a Songthaew?",
+    "whatIsDesc": "A songthaew (สองแถว, literally \"two rows\") is a converted pickup truck with two bench seats in the back. It's the most common and affordable public transport in Pattaya, with fixed routes costing just 10 Thai Baht (≈ $0.30 USD).",
+    "howToRide": "How to Ride",
+    "howToRideSteps": [
+      "Stand on the roadside and wave to flag down a songthaew going your direction",
+      "Hop on the back - no need to tell the driver your stop",
+      "When approaching your destination, press the buzzer button inside",
+      "After getting off, walk to the driver's window and pay 10 Baht",
+      "That's it! No tickets, no apps, just hop on and off"
+    ],
+    "disclaimer": "Route and price information is provided as a reference guide. Actual routes and fares may vary."
+  },
+  "common": {
+    "thb": "THB",
+    "baht": "Baht",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "close": "Close",
+    "back": "Back",
+    "viewOnMap": "View on Map",
+    "perPerson": "per person"
+  }
+}
