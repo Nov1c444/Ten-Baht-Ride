@@ -1,144 +1,146 @@
 # Ten Baht Ride 🚐
 
-芭提雅双条车（Songthaew）乘车指南 —— 一个纯前端的交互式乘车助手。
+[中文版](./README.zh-CN.md)
 
-> 双条车是芭提雅最常见的公共交通工具，因固定路线票价仅 10 泰铢而得名。
+An interactive ride guide for Pattaya's Songthaew (shared minibus) — a pure frontend web app.
 
-## 功能
+> The Songthaew is the most common public transport in Pattaya, nicknamed "Ten Baht Ride" for its fixed-route fare of just 10 THB.
 
-### 1. 路线展示
-- 展示芭提雅主要双条车固定路线（环线、Jomtien 线、Naklua 线等）
-- 在 Google Maps 上可视化路线走向、主要站点及途经地标
-- 标注票价信息（固定路线 10 THB / 包车价格参考）
+## Features
 
-### 2. 响应式设计
-- 移动端优先，适配手机竖屏浏览
-- 桌面端自适应布局，充分利用大屏空间
+### 1. Route Display
+- Shows major fixed Songthaew routes in Pattaya (Circular, Jomtien, Naklua, etc.)
+- Visualizes routes, key stops, and landmarks on Google Maps
+- Displays fare info (fixed route 10 THB / charter price reference)
 
-### 3. 智能乘车建议
-用户输入目的地（如酒店名、商场、景点），系统给出：
-- **推荐路线** — 乘坐哪条线路的双条车
-- **上车地点** — 在哪里招手上车（地图标记）
-- **下车地点** — 在哪里按铃下车（地图标记）
-- **票价参考** — 预计费用
-- **实用提示** — 按铃时机、注意事项
+### 2. Responsive Design
+- Mobile-first, optimized for portrait phone browsing
+- Adaptive desktop layout that makes full use of larger screens
 
-地点输入集成 Google Places Autocomplete，支持模糊搜索酒店、景点、商场等。
+### 3. Smart Ride Advisor
+Users enter a destination (hotel, mall, attraction) and the system provides:
+- **Recommended Route** — which Songthaew line to take
+- **Boarding Point** — where to hail the ride (marked on map)
+- **Alighting Point** — where to ring the bell to get off (marked on map)
+- **Fare Estimate** — expected cost
+- **Tips** — when to ring the bell, things to note
 
-### 4. 国际化 (i18n)
-支持多语言切换，覆盖主要游客群体：
+Destination input integrates Google Places Autocomplete for fuzzy search of hotels, attractions, malls, etc.
 
-| 语言 | 代码 | 说明 |
-|------|------|------|
-| English | `en` | 默认语言 |
-| 中文（简体） | `zh-CN` | — |
-| 中文（繁體） | `zh-TW` | — |
-| ภาษาไทย | `th` | 泰语 |
-| 한국어 | `ko` | 韩语 |
-| 日本語 | `ja` | 日语 |
-| Русский | `ru` | 俄语 |
+### 4. Internationalization (i18n)
+Multi-language support covering major tourist groups:
 
-- 自动检测浏览器语言偏好
-- 用户可手动切换语言，选择持久化到 localStorage
-- 路线名称、站点名称、乘车提示等均做多语言适配
+| Language | Code | Note |
+|----------|------|------|
+| English | `en` | Default |
+| 中文（简体） | `zh-CN` | Simplified Chinese |
+| 中文（繁體） | `zh-TW` | Traditional Chinese |
+| ภาษาไทย | `th` | Thai |
+| 한국어 | `ko` | Korean |
+| 日本語 | `ja` | Japanese |
+| Русский | `ru` | Russian |
 
-## 技术栈
+- Auto-detects browser language preference
+- Users can manually switch languages; selection persisted to localStorage
+- Route names, stop names, ride tips, etc. are all localized
 
-| 类别 | 选型 |
-|------|------|
-| 框架 | React 19 |
-| 构建 | Vite |
-| 语言 | TypeScript |
-| 样式 | Tailwind CSS |
-| 路由 | React Router |
-| 地图 | Google Maps JavaScript API + @vis.gl/react-google-maps |
-| 地点搜索 | Google Places API (Autocomplete) |
-| 国际化 | i18next + react-i18next |
-| 部署 | Vercel / Cloudflare Pages |
+## Tech Stack
 
-## Google Maps API 配置
+| Category | Choice |
+|----------|--------|
+| Framework | React 19 |
+| Build | Vite |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Routing | React Router |
+| Maps | Google Maps JavaScript API + @vis.gl/react-google-maps |
+| Places Search | Google Places API (Autocomplete) |
+| i18n | i18next + react-i18next |
+| Deployment | Vercel / Cloudflare Pages |
 
-本项目依赖以下 Google Maps Platform API：
+## Google Maps API Setup
 
-| API | 用途 |
-|-----|------|
-| Maps JavaScript API | 地图渲染、路线绘制 |
-| Places API (New) | 地点自动补全、地点详情 |
-| Geocoding API | 地址解析（可选） |
+This project depends on the following Google Maps Platform APIs:
 
-### 获取 API Key
+| API | Purpose |
+|-----|---------|
+| Maps JavaScript API | Map rendering, route drawing |
+| Places API (New) | Place autocomplete, place details |
+| Geocoding API | Address resolution (optional) |
 
-1. 前往 [Google Cloud Console](https://console.cloud.google.com/)
-2. 创建项目并启用以上 API
-3. 创建 API Key，建议限制：
-   - **应用限制**：HTTP referrers（填写你的域名）
-   - **API 限制**：仅启用上述 3 个 API
-4. 在项目根目录创建 `.env.local`：
+### Getting an API Key
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a project and enable the APIs above
+3. Create an API Key with recommended restrictions:
+   - **Application restriction**: HTTP referrers (your domain)
+   - **API restriction**: Only enable the 3 APIs above
+4. Create `.env.local` in the project root:
 
 ```bash
 VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
 ```
 
-> ⚠️ 注意：Google Maps API 有免费额度（每月 $200 信用额度），个人小项目通常够用。详见 [Pricing](https://developers.google.com/maps/billing-and-pricing/pricing)。
+> ⚠️ Note: Google Maps API includes a free tier ($200 monthly credit), which is usually sufficient for personal projects. See [Pricing](https://developers.google.com/maps/billing-and-pricing/pricing).
 
-## 数据来源
+## Data Sources
 
-路线与站点数据为静态 JSON，基于以下信息整理：
-- 芭提雅双条车实际运营路线（2024-2025）
-- 主要路线：
-  - **环线（Circular Route）**：Beach Road 南行 → Walking Street 掉头 → Second Road 北行，全程 10 THB
-  - **Jomtien 线**：市区 → Jomtien Beach，约 10-20 THB
-  - **Naklua 线**：市区 → Naklua / Wongamat，约 10 THB
-  - **Sukhumvit 线**：沿 Sukhumvit Road 行驶
+Route and stop data is static JSON, compiled from:
+- Actual Pattaya Songthaew operating routes (2024–2025)
+- Major routes:
+  - **Circular Route**: Beach Road southbound → U-turn at Walking Street → Second Road northbound, 10 THB
+  - **Jomtien Line**: City center → Jomtien Beach, ~10–20 THB
+  - **Naklua Line**: City center → Naklua / Wongamat, ~10 THB
+  - **Sukhumvit Line**: Along Sukhumvit Road
 
-## 快速开始
+## Quick Start
 
 ```bash
-# 安装依赖
+# Install dependencies
 npm install
 
-# 配置环境变量
+# Set up environment variables
 cp .env.example .env.local
-# 编辑 .env.local，填入你的 Google Maps API Key
+# Edit .env.local and fill in your Google Maps API Key
 
-# 启动开发服务器
+# Start dev server
 npm run dev
 
-# 构建生产版本
+# Production build
 npm run build
 ```
 
-## 项目结构
+## Project Structure
 
 ```
 Ten-Baht-Ride/
 ├── public/
-│   └── data/                # 静态路线数据 (JSON)
+│   └── data/                # Static route data (JSON)
 ├── src/
-│   ├── components/          # 通用 UI 组件
-│   │   ├── Map/             # 地图组件
-│   │   ├── LanguageSwitcher/# 语言切换器
-│   │   └── Layout/          # 布局组件
+│   ├── components/          # Shared UI components
+│   │   ├── Map/             # Map component
+│   │   ├── LanguageSwitcher/# Language switcher
+│   │   └── Layout/          # Layout components
 │   ├── features/
-│   │   ├── routes/          # 路线展示功能
-│   │   └── advisor/         # 乘车建议功能
-│   ├── data/                # 路线、站点、地标数据
+│   │   ├── routes/          # Route display feature
+│   │   └── advisor/         # Ride advisor feature
+│   ├── data/                # Routes, stops, landmarks data
 │   ├── i18n/
-│   │   ├── index.ts         # i18next 初始化配置
+│   │   ├── index.ts         # i18next initialization
 │   │   └── locales/
 │   │       ├── en.json      # English
-│   │       ├── zh-CN.json   # 简体中文
-│   │       ├── zh-TW.json   # 繁體中文
-│   │       ├── th.json      # ภาษาไทย
-│   │       ├── ko.json      # 한국어
-│   │       ├── ja.json      # 日本語
-│   │       └── ru.json      # Русский
-│   ├── hooks/               # 自定义 Hooks
-│   ├── types/               # TypeScript 类型定义
-│   ├── utils/               # 工具函数
+│   │       ├── zh-CN.json   # Simplified Chinese
+│   │       ├── zh-TW.json   # Traditional Chinese
+│   │       ├── th.json      # Thai
+│   │       ├── ko.json      # Korean
+│   │       ├── ja.json      # Japanese
+│   │       └── ru.json      # Russian
+│   ├── hooks/               # Custom Hooks
+│   ├── types/               # TypeScript type definitions
+│   ├── utils/               # Utility functions
 │   ├── App.tsx
 │   └── main.tsx
-├── .env.example             # 环境变量模板
+├── .env.example             # Environment variable template
 ├── index.html
 ├── package.json
 ├── tsconfig.json
