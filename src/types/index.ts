@@ -37,6 +37,25 @@ export interface RidingAdvice {
   tipKeys: string[]
 }
 
+export interface TripSegment {
+  routeId: string
+  routeNameKey: string
+  routeColor: string
+  boardingStop: RouteStop
+  alightingStop: RouteStop
+  price: number
+}
+
+export interface TripAdvice {
+  segments: TripSegment[]
+  totalPrice: number
+  walkToBoard: number
+  walkFromAlight: number
+  originPosition: LatLng
+  destinationPosition: LatLng
+  tipKeys: string[]
+}
+
 export type SupportedLanguage = 'en' | 'zh-CN' | 'zh-TW' | 'th' | 'ko' | 'ja' | 'ru'
 
 export interface LanguageOption {

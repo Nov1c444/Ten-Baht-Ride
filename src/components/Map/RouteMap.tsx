@@ -6,7 +6,7 @@ import { PATTAYA_CENTER } from '@/utils/geo'
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
 
-function RoutePolylines({ routes, highlightId }: { routes: SongthaewRoute[]; highlightId?: string }) {
+function RoutePolylines({ routes, highlightIds }: { routes: SongthaewRoute[]; highlightIds?: string[] }) {
   const map = useMap()
   const mapsLib = useMapsLibrary('maps')
 
@@ -15,9 +15,10 @@ function RoutePolylines({ routes, highlightId }: { routes: SongthaewRoute[]; hig
 
     const polylines: google.maps.Polyline[] = []
     const markers: google.maps.Marker[] = []
+    const highlightSet = highlightIds ? new Set(highlightIds) : null
 
     routes.forEach((route) => {
-      const isHighlighted = !highlightId || route.id === highlightId
+      const isHighlighted = !highlightSet || highlightSet.has(route.id)
       const polyline = new mapsLib.Polyline({
         path: route.path,
         strokeColor: route.color,
@@ -58,23 +59,46 @@ function RoutePolylines({ routes, highlightId }: { routes: SongthaewRoute[]; hig
       polylines.forEach((p) => p.setMap(null))
       markers.forEach((m) => m.setMap(null))
     }
-  }, [map, mapsLib, routes, highlightId])
+  }, [map, mapsLib, routes, highlightIds])
 
   return null
 }
 
-function HighlightMarkers({
+function TripMarkers({
+  origin,
   boarding,
   alighting,
+  transfer,
 }: {
+  origin?: LatLng
   boarding?: LatLng
   alighting?: LatLng
+  transfer?: LatLng
 }) {
   const map = useMap()
 
   useEffect(() => {
     if (!map) return
     const markers: google.maps.Marker[] = []
+
+    if (origin) {
+      markers.push(
+        new google.maps.Marker({
+          position: origin,
+          map,
+          title: 'Your location',
+          label: { text: 'O', color: '#fff', fontWeight: 'bold' },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 14,
+            fillColor: '#2563eb',
+            fillOpacity: 1,
+            strokeColor: '#fff',
+            strokeWeight: 3,
+          },
+        }),
+      )
+    }
 
     if (boarding) {
       markers.push(
@@ -87,6 +111,25 @@ function HighlightMarkers({
             path: google.maps.SymbolPath.CIRCLE,
             scale: 14,
             fillColor: '#16a34a',
+            fillOpacity: 1,
+            strokeColor: '#fff',
+            strokeWeight: 3,
+          },
+        }),
+      )
+    }
+
+    if (transfer) {
+      markers.push(
+        new google.maps.Marker({
+          position: transfer,
+          map,
+          title: 'Transfer here',
+          label: { text: 'T', color: '#fff', fontWeight: 'bold' },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 14,
+            fillColor: '#eab308',
             fillOpacity: 1,
             strokeColor: '#fff',
             strokeWeight: 3,
@@ -117,14 +160,28 @@ function HighlightMarkers({
     return () => {
       markers.forEach((m) => m.setMap(null))
     }
-  }, [map, boarding, alighting])
+  }, [map, origin, boarding, alighting, transfer])
 
   return null
 }
 
-function StaticMapFallback({ routes, highlightId }: { routes: SongthaewRoute[]; highlightId?: string }) {
+function FitBoundsController({ points }: { points: LatLng[] }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (!map || points.length === 0) return
+    const bounds = new google.maps.LatLngBounds()
+    points.forEach((p) => bounds.extend(p))
+    map.fitBounds(bounds, 60)
+  }, [map, points])
+
+  return null
+}
+
+function StaticMapFallback({ routes, highlightIds }: { routes: SongthaewRoute[]; highlightIds?: string[] }) {
   const { t } = useTranslation()
-  const displayRoutes = highlightId ? routes.filter((r) => r.id === highlightId) : routes
+  const highlightSet = highlightIds ? new Set(highlightIds) : null
+  const displayRoutes = highlightSet ? routes.filter((r) => highlightSet.has(r.id)) : routes
 
   return (
     <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-blue-200">
@@ -148,19 +205,31 @@ function StaticMapFallback({ routes, highlightId }: { routes: SongthaewRoute[]; 
 export default function RouteMap({
   routes,
   highlightRouteId,
+  highlightRouteIds,
   boardingPosition,
   alightingPosition,
+  originPosition,
+  transferPosition,
   className = '',
 }: {
   routes: SongthaewRoute[]
   highlightRouteId?: string
+  highlightRouteIds?: string[]
   boardingPosition?: LatLng
   alightingPosition?: LatLng
+  originPosition?: LatLng
+  transferPosition?: LatLng
   className?: string
 }) {
+  const effectiveIds = useMemo(() => {
+    if (highlightRouteIds && highlightRouteIds.length > 0) return highlightRouteIds
+    if (highlightRouteId) return [highlightRouteId]
+    return undefined
+  }, [highlightRouteId, highlightRouteIds])
+
   const center = useMemo(() => {
-    if (highlightRouteId) {
-      const route = routes.find((r) => r.id === highlightRouteId)
+    if (effectiveIds && effectiveIds.length > 0) {
+      const route = routes.find((r) => r.id === effectiveIds[0])
       if (route && route.path.length > 0) {
         const avgLat = route.path.reduce((s, p) => s + p.lat, 0) / route.path.length
         const avgLng = route.path.reduce((s, p) => s + p.lng, 0) / route.path.length
@@ -168,12 +237,21 @@ export default function RouteMap({
       }
     }
     return PATTAYA_CENTER
-  }, [routes, highlightRouteId])
+  }, [routes, effectiveIds])
+
+  const fitPoints = useMemo(() => {
+    const pts: LatLng[] = []
+    if (originPosition) pts.push(originPosition)
+    if (boardingPosition) pts.push(boardingPosition)
+    if (transferPosition) pts.push(transferPosition)
+    if (alightingPosition) pts.push(alightingPosition)
+    return pts
+  }, [originPosition, boardingPosition, transferPosition, alightingPosition])
 
   if (!API_KEY) {
     return (
       <div className={className}>
-        <StaticMapFallback routes={routes} highlightId={highlightRouteId} />
+        <StaticMapFallback routes={routes} highlightIds={effectiveIds} />
       </div>
     )
   }
@@ -183,14 +261,20 @@ export default function RouteMap({
       <APIProvider apiKey={API_KEY}>
         <Map
           defaultCenter={center}
-          defaultZoom={highlightRouteId ? 14 : 13}
+          defaultZoom={effectiveIds ? 14 : 13}
           mapId="ten-baht-ride-map"
           className="w-full h-full rounded-xl overflow-hidden"
           disableDefaultUI={false}
           gestureHandling="greedy"
         >
-          <RoutePolylines routes={routes} highlightId={highlightRouteId} />
-          <HighlightMarkers boarding={boardingPosition} alighting={alightingPosition} />
+          <RoutePolylines routes={routes} highlightIds={effectiveIds} />
+          <TripMarkers
+            origin={originPosition}
+            boarding={boardingPosition}
+            alighting={alightingPosition}
+            transfer={transferPosition}
+          />
+          {fitPoints.length >= 2 && <FitBoundsController points={fitPoints} />}
         </Map>
       </APIProvider>
     </div>
