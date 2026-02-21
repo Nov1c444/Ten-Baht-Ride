@@ -1,0 +1,72 @@
+[
+  {
+    "id": "circular",
+    "name": "Circular Route",
+    "color": "#2563eb",
+    "price": 10,
+    "operatingHours": "06:00 - 22:00",
+    "frequency": "5-10 min",
+    "description": "Beach Road south → Walking Street → Second Road north",
+    "stops": [
+      { "id": "c1", "name": "Dolphin Roundabout", "lat": 12.9467, "lng": 100.8828, "main": true },
+      { "id": "c2", "name": "Central Pattaya Beach", "lat": 12.9400, "lng": 100.8840, "main": true },
+      { "id": "c3", "name": "Royal Garden Plaza", "lat": 12.9350, "lng": 100.8850, "main": true },
+      { "id": "c4", "name": "Beach Road Soi 13/14", "lat": 12.9300, "lng": 100.8855, "main": false },
+      { "id": "c5", "name": "Walking Street", "lat": 12.9260, "lng": 100.8860, "main": true },
+      { "id": "c6", "name": "Walking Street (Turn)", "lat": 12.9230, "lng": 100.8840, "main": false },
+      { "id": "c7", "name": "South Pattaya Second Road", "lat": 12.9260, "lng": 100.8800, "main": false },
+      { "id": "c8", "name": "Tuk Com (IT Mall)", "lat": 12.9300, "lng": 100.8790, "main": true },
+      { "id": "c9", "name": "Central Festival", "lat": 12.9350, "lng": 100.8780, "main": true },
+      { "id": "c10", "name": "Big C Extra", "lat": 12.9400, "lng": 100.8775, "main": true },
+      { "id": "c11", "name": "North Pattaya", "lat": 12.9467, "lng": 100.8770, "main": true }
+    ]
+  },
+  {
+    "id": "jomtien",
+    "name": "Jomtien Route",
+    "color": "#16a34a",
+    "price": 10,
+    "operatingHours": "06:00 - 21:00",
+    "frequency": "10-20 min",
+    "description": "South Pattaya → Jomtien Beach",
+    "stops": [
+      { "id": "j1", "name": "South Pattaya / Walking Street", "lat": 12.9260, "lng": 100.8860, "main": true },
+      { "id": "j2", "name": "Pratumnak Hill", "lat": 12.9180, "lng": 100.8835, "main": true },
+      { "id": "j3", "name": "Jomtien Beach (North)", "lat": 12.9120, "lng": 100.8820, "main": true },
+      { "id": "j4", "name": "Jomtien Beach (Central)", "lat": 12.9060, "lng": 100.8810, "main": true },
+      { "id": "j5", "name": "Jomtien Beach (South)", "lat": 12.9000, "lng": 100.8800, "main": true },
+      { "id": "j6", "name": "Jomtien Night Market", "lat": 12.8940, "lng": 100.8790, "main": true }
+    ]
+  },
+  {
+    "id": "naklua",
+    "name": "Naklua Route",
+    "color": "#dc2626",
+    "price": 10,
+    "operatingHours": "06:00 - 20:00",
+    "frequency": "10-20 min",
+    "description": "Dolphin Roundabout → Naklua / Wongamat",
+    "stops": [
+      { "id": "n1", "name": "Dolphin Roundabout", "lat": 12.9467, "lng": 100.8828, "main": true },
+      { "id": "n2", "name": "Wongamat Beach", "lat": 12.9540, "lng": 100.8835, "main": true },
+      { "id": "n3", "name": "Sanctuary of Truth", "lat": 12.9580, "lng": 100.8840, "main": true },
+      { "id": "n4", "name": "Naklua Market", "lat": 12.9620, "lng": 100.8850, "main": true },
+      { "id": "n5", "name": "Naklua Soi 18", "lat": 12.9660, "lng": 100.8860, "main": true }
+    ]
+  },
+  {
+    "id": "sukhumvit",
+    "name": "Sukhumvit Route",
+    "color": "#9333ea",
+    "price": 10,
+    "operatingHours": "06:00 - 20:00",
+    "frequency": "15-30 min",
+    "description": "Along Sukhumvit Road from North Pattaya",
+    "stops": [
+      { "id": "s1", "name": "North Pattaya Road", "lat": 12.9467, "lng": 100.8828, "main": true },
+      { "id": "s2", "name": "Tesco Lotus", "lat": 12.9467, "lng": 100.8970, "main": true },
+      { "id": "s3", "name": "Sukhumvit Soi 51", "lat": 12.9467, "lng": 100.9040, "main": false },
+      { "id": "s4", "name": "Highway Intersection", "lat": 12.9467, "lng": 100.9110, "main": true }
+    ]
+  }
+]
