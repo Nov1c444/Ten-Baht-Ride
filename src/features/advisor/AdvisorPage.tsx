@@ -44,6 +44,9 @@ function StopLink({ name, position }: { name: string; position: LatLng }) {
 
 type GeoStatus = 'idle' | 'loading' | 'success' | 'denied' | 'unavailable'
 
+const walkColorClass = (meters: number) =>
+  meters > 2000 ? 'text-red-500' : meters > 1000 ? 'text-amber-500' : 'text-gray-400'
+
 function useWalkingDistances(trip: TripAdvice | null) {
   const routesLib = useMapsLibrary('routes')
   const directionsService = useRef<google.maps.DirectionsService | null>(null)
@@ -127,13 +130,8 @@ export default function AdvisorPage() {
   }, [t])
 
   const handlePlanTrip = useCallback(() => {
-    if (!originPos || !destPos) {
-      setTrip(null)
-      setSearched(true)
-      return
-    }
-    const result = planTrip(originPos, destPos, routes)
-    setTrip(result)
+    if (!originPos || !destPos) return
+    setTrip(planTrip(originPos, destPos, routes))
     setSearched(true)
   }, [originPos, destPos])
 
@@ -311,7 +309,7 @@ export default function AdvisorPage() {
 
             <div className="p-4 space-y-0">
               {walkToBoard > 0 && (
-                <div className="flex items-center gap-3 text-xs text-gray-400 py-1.5">
+                <div className={`flex items-center gap-3 text-xs py-1.5 ${walkColorClass(walkToBoard)}`}>
                   <div className="w-8 flex justify-center">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -319,7 +317,8 @@ export default function AdvisorPage() {
                   </div>
                   <span>
                     {t('advisor.walkDistance', { distance: walkToBoard })}
-                    {!walkDistances.toBoard && <span className="text-gray-300 ml-1">~</span>}
+                    {!walkDistances.toBoard && <span className="opacity-50 ml-1">~</span>}
+                    {walkToBoard > 2000 && <span className="ml-1">({t('advisor.considerTaxi')})</span>}
                   </span>
                 </div>
               )}
@@ -368,7 +367,7 @@ export default function AdvisorPage() {
               ))}
 
               {walkFromAlight > 0 && (
-                <div className="flex items-center gap-3 text-xs text-gray-400 py-1.5">
+                <div className={`flex items-center gap-3 text-xs py-1.5 ${walkColorClass(walkFromAlight)}`}>
                   <div className="w-8 flex justify-center">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -376,7 +375,8 @@ export default function AdvisorPage() {
                   </div>
                   <span>
                     {t('advisor.walkDistance', { distance: walkFromAlight })}
-                    {!walkDistances.fromAlight && <span className="text-gray-300 ml-1">~</span>}
+                    {!walkDistances.fromAlight && <span className="opacity-50 ml-1">~</span>}
+                    {walkFromAlight > 2000 && <span className="ml-1">({t('advisor.considerTaxi')})</span>}
                   </span>
                 </div>
               )}
@@ -412,13 +412,6 @@ export default function AdvisorPage() {
         </div>
       )}
 
-      {/* No results */}
-      {searched && !trip && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-          <div className="text-4xl mb-3">&#x1F6D1;</div>
-          <p className="text-gray-600">{t('advisor.noResults')}</p>
-        </div>
-      )}
     </div>
   )
 }

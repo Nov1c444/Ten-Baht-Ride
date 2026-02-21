@@ -149,7 +149,8 @@
     "selectFromList": "กรุณาเลือกสถานที่จากรายการแนะนำ",
     "originPoint": "ต้นทาง",
     "destinationPoint": "ปลายทาง",
-    "openInMaps": "เปิดใน Google Maps"
+    "openInMaps": "เปิดใน Google Maps",
+    "considerTaxi": "แนะนำแท็กซี่/มอเตอร์ไซค์"
   },
   "tips": {
     "pressButton": "กดกริ่งเมื่อใกล้ถึงจุดหมาย",

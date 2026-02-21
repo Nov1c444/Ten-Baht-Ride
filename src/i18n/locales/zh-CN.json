@@ -149,7 +149,8 @@
     "selectFromList": "请从建议列表中选择一个地点",
     "originPoint": "出发地",
     "destinationPoint": "目的地",
-    "openInMaps": "在谷歌地图中打开"
+    "openInMaps": "在谷歌地图中打开",
+    "considerTaxi": "建议打车/摩的"
   },
   "tips": {
     "pressButton": "快到站时按车内的按铃按钮",

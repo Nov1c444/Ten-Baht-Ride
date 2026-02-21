@@ -149,7 +149,8 @@
     "selectFromList": "Please select a location from the suggestion list",
     "originPoint": "Origin",
     "destinationPoint": "Destination",
-    "openInMaps": "Open in Google Maps"
+    "openInMaps": "Open in Google Maps",
+    "considerTaxi": "consider taxi/motorbike"
   },
   "tips": {
     "pressButton": "Press the buzzer/bell button when approaching your stop",

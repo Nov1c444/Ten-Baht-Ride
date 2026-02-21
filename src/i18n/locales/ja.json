@@ -149,7 +149,8 @@
     "selectFromList": "候補リストから場所を選択してください",
     "originPoint": "出発地",
     "destinationPoint": "目的地",
-    "openInMaps": "Google マップで開く"
+    "openInMaps": "Google マップで開く",
+    "considerTaxi": "タクシー/バイクタクシーを推奨"
   },
   "tips": {
     "pressButton": "停留所に近づいたら車内のブザーボタンを押してください",

@@ -73,9 +73,6 @@ const DEFAULT_TIP_KEYS = ['tips.pressButton', 'tips.haveChange', 'tips.payWhenEx
 // Street walking is ~1.4x straight-line distance in urban grids.
 const WALKING_FACTOR = 1.4
 
-// Max realistic walking for tourists in Pattaya heat (street distance).
-const MAX_WALKING_DISTANCE = 1000
-
 const TRANSFER_PENALTY_METERS = 400
 const TRANSFER_PROXIMITY = 500
 
@@ -87,10 +84,9 @@ interface RouteEval {
 const evaluateRouteForPosition = (
   position: LatLng,
   route: SongthaewRoute,
-): RouteEval | null => {
+): RouteEval => {
   const pathDist = distanceToPath(position, route.path)
   const estimatedWalk = Math.round(pathDist * WALKING_FACTOR)
-  if (estimatedWalk > MAX_WALKING_DISTANCE) return null
 
   const stopOnRoute = findNearestStopOnRoute(position, route.path)
   if (stopOnRoute) {
@@ -118,7 +114,6 @@ const buildDirectCandidates = (
     .map((route) => {
       const boarding = evaluateRouteForPosition(origin, route)
       const alighting = evaluateRouteForPosition(destination, route)
-      if (!boarding || !alighting) return null
       if (boarding.stop.id === alighting.stop.id) return null
 
       const segment: TripSegment = {
@@ -172,7 +167,6 @@ const buildTransferCandidates = (
         ] as [SongthaewRoute, SongthaewRoute][]) {
           const boarding = evaluateRouteForPosition(origin, first)
           const alighting = evaluateRouteForPosition(destination, second)
-          if (!boarding || !alighting) continue
 
           const transferRouteStop = toRouteStop(transferStop)
 
@@ -217,12 +211,12 @@ export const planTrip = (
   origin: LatLng,
   destination: LatLng,
   routes: SongthaewRoute[],
-): TripAdvice | null => {
+): TripAdvice => {
   const directs = buildDirectCandidates(origin, destination, routes)
   const transfers = buildTransferCandidates(origin, destination, routes)
 
   const all = [...directs, ...transfers].sort((a, b) => tripCost(a) - tripCost(b))
-  return all[0] ?? null
+  return all[0]
 }
 
 export const PATTAYA_CENTER: LatLng = { lat: 12.9336, lng: 100.8825 }

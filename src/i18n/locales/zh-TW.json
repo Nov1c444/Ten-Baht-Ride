@@ -149,7 +149,8 @@
     "selectFromList": "請從建議列表中選擇一個地點",
     "originPoint": "出發地",
     "destinationPoint": "目的地",
-    "openInMaps": "在 Google 地圖中開啟"
+    "openInMaps": "在 Google 地圖中開啟",
+    "considerTaxi": "建議搭計程車/摩托車"
   },
   "tips": {
     "pressButton": "快到站時按車內的按鈴按鈕",

@@ -149,7 +149,8 @@
     "selectFromList": "제안 목록에서 위치를 선택해주세요",
     "originPoint": "출발지",
     "destinationPoint": "목적지",
-    "openInMaps": "Google 지도에서 열기"
+    "openInMaps": "Google 지도에서 열기",
+    "considerTaxi": "택시/오토바이 추천"
   },
   "tips": {
     "pressButton": "정류장에 가까워지면 차내 벨 버튼을 누르세요",
