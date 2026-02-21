@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "テンバーツライド",
+    "subtitle": "パタヤ ソンテウ ガイド",
+    "description": "パタヤの象徴的な10バーツソンテウルートのインタラクティブガイド"
+  },
+  "nav": {
+    "routes": "路線",
+    "advisor": "乗車アドバイザー",
+    "about": "について"
+  },
+  "routes": {
+    "title": "ソンテウ路線",
+    "selectRoute": "地図で表示する路線を選択",
+    "allRoutes": "全路線",
+    "operatingHours": "運行時間",
+    "frequency": "運行間隔",
+    "price": "料金",
+    "stops": "停留所",
+    "mainStops": "主要停留所",
+    "circular": {
+      "name": "循環路線",
+      "description": "最も人気のある路線。ビーチロードを南下し、ウォーキングストリートで折り返し、セカンドロードを北上します。",
+      "priceNote": "路線全区間10バーツ"
+    },
+    "jomtien": {
+      "name": "ジョムティエン路線",
+      "description": "サウスパタヤ（ウォーキングストリート付近）からジョムティエンビーチを結びます。ビーチへのアクセスに最適。",
+      "priceNote": "距離に応じて10-20バーツ"
+    },
+    "naklua": {
+      "name": "ナクルア路線",
+      "description": "ドルフィンロータリーから北のナクルア地区まで。ウォンアマットビーチとサンクチュアリオブトゥルースを通過。",
+      "priceNote": "標準路線10バーツ"
+    },
+    "sukhumvit": {
+      "name": "スクンビット路線",
+      "description": "ノースパタヤ交差点から東方向にスクンビット通りに沿って運行。",
+      "priceNote": "標準路線10バーツ"
+    }
+  },
+  "stops": {
+    "dolphinRoundabout": "ドルフィンロータリー",
+    "centralPattayaBeach": "セントラルパタヤビーチ",
+    "royalGardenPlaza": "ロイヤルガーデンプラザ",
+    "beachRoadSoi13": "ビーチロード ソイ13/14",
+    "walkingStreet": "ウォーキングストリート",
+    "walkingStreetTurn": "ウォーキングストリート（折返し）",
+    "southPattayaSecondRoad": "サウスパタヤ - セカンドロード",
+    "tukCom": "トゥッコム（ITモール）",
+    "centralFestival": "セントラルフェスティバル",
+    "bigCExtra": "ビッグCエクストラ",
+    "northPattaya": "ノースパタヤ",
+    "southPattayaWalkingStreet": "サウスパタヤ / ウォーキングストリート",
+    "pratumnakHill": "プラタムナックヒル",
+    "jomtienBeachNorth": "ジョムティエンビーチ（北）",
+    "jomtienBeachCentral": "ジョムティエンビーチ（中央）",
+    "jomtienBeachSouth": "ジョムティエンビーチ（南）",
+    "jomtienNightMarket": "ジョムティエンナイトマーケット",
+    "wongamatBeach": "ウォンアマットビーチ",
+    "sanctuaryOfTruth": "サンクチュアリオブトゥルース",
+    "nakluaMarket": "ナクルアマーケット",
+    "nakluaSoi18": "ナクルア ソイ18",
+    "northPattayaRoad": "ノースパタヤロード",
+    "tescoLotus": "テスコロータス",
+    "sukhumvitSoi51": "スクンビット ソイ51",
+    "highwayIntersection": "高速道路交差点"
+  },
+  "landmarks": {
+    "dolphinRoundabout": "ドルフィンロータリーの噴水",
+    "centralPattayaBeach": "セントラルパタヤビーチエリア",
+    "royalGardenPlaza": "ロイヤルガーデンプラザショッピングモール",
+    "walkingStreet": "ウォーキングストリート入口",
+    "tukCom": "トゥッコム ITモール",
+    "centralFestival": "セントラルフェスティバル パタヤビーチ",
+    "bigCExtra": "ビッグCエクストラ スーパーマーケット",
+    "northPattaya": "ノースパタヤエリア",
+    "pratumnakHill": "プラタムナックヒル展望台",
+    "jomtienBeachNorth": "ジョムティエンビーチ北入口",
+    "jomtienBeachCentral": "ジョムティエンビーチ中央エリア",
+    "jomtienBeachSouth": "ジョムティエンビーチ南端",
+    "jomtienNightMarket": "ジョムティエンナイトマーケット",
+    "wongamatBeach": "ウォンアマットビーチエリア",
+    "sanctuaryOfTruth": "サンクチュアリオブトゥルース寺院",
+    "nakluaMarket": "ナクルアシーフードマーケット",
+    "nakluaSoi18": "ナクルア ソイ18",
+    "northPattayaRoad": "ノースパタヤロード交差点",
+    "tescoLotus": "テスコロータス パタヤ",
+    "highwayIntersection": "高速7号線交差点"
+  },
+  "advisor": {
+    "title": "乗車アドバイザー",
+    "subtitle": "目的地を入力すると、最適なソンテウ路線をお探しします",
+    "inputPlaceholder": "目的地を入力（ホテル、モール、観光地...）",
+    "searchButton": "路線を検索",
+    "searching": "検索中...",
+    "results": "おすすめ路線",
+    "noResults": "この目的地に適したソンテウ路線が見つかりません。タクシーまたはバイクタクシーのご利用をお勧めします。",
+    "boardAt": "乗車地点",
+    "alightAt": "降車地点",
+    "estimatedPrice": "推定料金",
+    "tips": "ヒント",
+    "noApiKey": "Google Maps APIキーが設定されていません。手動検索モードを使用します。",
+    "popularDestinations": "人気の目的地",
+    "trySearching": "これらの人気目的地を検索してみてください："
+  },
+  "tips": {
+    "pressButton": "停留所に近づいたら車内のブザーボタンを押してください",
+    "haveChange": "小銭を用意してください（20バーツ札が最適）",
+    "payWhenExit": "乗車時ではなく降車時に料金を支払います",
+    "waveToStop": "通りかかるソンテウに手を振って止めてください",
+    "checkDirection": "ソンテウが目的の方向に向かっていることを確認してください",
+    "nightPrice": "深夜の乗車は割増になることがあります（22時以降）",
+    "charterPrice": "乗客が1人だけの場合、運転手がチャーター料金を請求することがあります。交渉してください",
+    "beachRoadSouth": "ビーチロードではソンテウは南行きのみです（ウォーキングストリート方面）",
+    "secondRoadNorth": "セカンドロードではソンテウは北行きのみです（ドルフィンロータリー方面）"
+  },
+  "about": {
+    "title": "テンバーツライドについて",
+    "whatIs": "ソンテウとは？",
+    "whatIsDesc": "ソンテウ（สองแถว、「2列」の意味）は、後部に2列のベンチシートを備えた改造ピックアップトラックです。パタヤで最も一般的で手頃な公共交通機関で、固定路線の料金はわずか10バーツ（約40円）です。",
+    "howToRide": "乗り方",
+    "howToRideSteps": [
+      "道路脇に立ち、同じ方向に走るソンテウに手を振って止めます",
+      "後ろに乗り込みます — 運転手に行き先を告げる必要はありません",
+      "目的地に近づいたら、車内のブザーボタンを押します",
+      "降りた後、運転手の窓に行って10バーツを支払います",
+      "以上です！チケットもアプリも不要、乗って降りるだけです"
+    ],
+    "disclaimer": "路線・料金情報は参考情報です。実際の路線・運賃は異なる場合があります。"
+  },
+  "common": {
+    "thb": "バーツ",
+    "baht": "バーツ",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "close": "閉じる",
+    "back": "戻る",
+    "viewOnMap": "地図で表示",
+    "perPerson": "1人あたり"
+  }
+}
