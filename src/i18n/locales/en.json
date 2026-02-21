@@ -145,7 +145,8 @@
     "planTrip": "Plan Trip",
     "subtitle2": "Enter your starting point and destination to find the best songthaew route",
     "stopResults": "Songthaew Stops",
-    "placesResults": "Nearby Places"
+    "placesResults": "Nearby Places",
+    "selectFromList": "Please select a location from the suggestion list"
   },
   "tips": {
     "pressButton": "Press the buzzer/bell button when approaching your stop",

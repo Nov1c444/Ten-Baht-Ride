@@ -7,19 +7,17 @@ import RouteMap from '@/components/Map/RouteMap'
 import LocationSearch from '@/components/LocationSearch/LocationSearch'
 
 const POPULAR_DESTINATIONS = [
-  { nameKey: 'stops.walkingStreet', position: { lat: 12.9260, lng: 100.8860 } },
-  { nameKey: 'stops.centralFestival', position: { lat: 12.9350, lng: 100.8780 } },
-  { nameKey: 'stops.jomtienBeachCentral', position: { lat: 12.9060, lng: 100.8810 } },
-  { nameKey: 'stops.sanctuaryOfTruth', position: { lat: 12.9580, lng: 100.8840 } },
-  { nameKey: 'stops.tukCom', position: { lat: 12.9300, lng: 100.8790 } },
-  { nameKey: 'stops.nakluaMarket', position: { lat: 12.9620, lng: 100.8850 } },
+  { label: 'Walking Street', position: { lat: 12.917461, lng: 100.8952667 } },
+  { label: 'Central Festival', position: { lat: 12.9324242, lng: 100.8986652 } },
+  { label: 'Jomtien (South end)', position: { lat: 12.9090573, lng: 100.8950447 } },
+  { label: 'Bali Hai Pier / 3rd Road', position: { lat: 12.9344475, lng: 100.8921487 } },
 ]
 
 const POPULAR_ORIGINS = [
-  { nameKey: 'stops.dolphinRoundabout', position: { lat: 12.9467, lng: 100.8828 } },
-  { nameKey: 'stops.centralPattayaBeach', position: { lat: 12.9400, lng: 100.8840 } },
-  { nameKey: 'stops.walkingStreet', position: { lat: 12.9260, lng: 100.8860 } },
-  { nameKey: 'stops.centralFestival', position: { lat: 12.9350, lng: 100.8780 } },
+  { label: 'Dolphin Circle', position: { lat: 12.95094, lng: 100.88882 } },
+  { label: 'Central Festival', position: { lat: 12.9324242, lng: 100.8986652 } },
+  { label: 'Walking Street', position: { lat: 12.917461, lng: 100.8952667 } },
+  { label: 'Sukhumvit (Central Pattaya Rd)', position: { lat: 12.9365228, lng: 100.8869766 } },
 ]
 
 type GeoStatus = 'idle' | 'loading' | 'success' | 'denied' | 'unavailable'
@@ -67,15 +65,15 @@ export default function AdvisorPage() {
     setSearched(true)
   }, [originPos, destPos])
 
-  const handleOriginQuickPick = useCallback((nameKey: string, position: LatLng) => {
-    setOriginQuery(t(nameKey))
+  const handleOriginQuickPick = useCallback((label: string, position: LatLng) => {
+    setOriginQuery(label)
     setOriginPos(position)
-  }, [t])
+  }, [])
 
-  const handleDestQuickPick = useCallback((nameKey: string, position: LatLng) => {
-    setDestQuery(t(nameKey))
+  const handleDestQuickPick = useCallback((label: string, position: LatLng) => {
+    setDestQuery(label)
     setDestPos(position)
-  }, [t])
+  }, [])
 
   const handleOriginChange = useCallback((v: string) => { setOriginQuery(v); setOriginPos(null) }, [])
   const handleOriginSelect = useCallback((label: string, pos: LatLng) => { setOriginQuery(label); setOriginPos(pos) }, [])
@@ -154,10 +152,18 @@ export default function AdvisorPage() {
 
             <button
               onClick={handlePlanTrip}
-              className="w-full py-3 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700 transition-colors"
+              disabled={!originPos || !destPos}
+              className="w-full py-3 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t('advisor.planTrip')}
             </button>
+            {(!originPos || !destPos) && (originQuery || destQuery) && (
+              <p className="text-xs text-amber-600 text-center mt-1">
+                {!originPos && originQuery ? t('advisor.selectFromList') : ''}
+                {!originPos && originQuery && !destPos && destQuery ? ' / ' : ''}
+                {!destPos && destQuery ? t('advisor.selectFromList') : ''}
+              </p>
+            )}
           </div>
 
           {/* Quick picks when not yet searched */}
@@ -168,11 +174,11 @@ export default function AdvisorPage() {
                 <div className="flex flex-wrap gap-2">
                   {POPULAR_ORIGINS.map((o) => (
                     <button
-                      key={o.nameKey}
-                      onClick={() => handleOriginQuickPick(o.nameKey, o.position)}
+                      key={o.label}
+                      onClick={() => handleOriginQuickPick(o.label, o.position)}
                       className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs border border-blue-200 hover:border-blue-300 transition-colors"
                     >
-                      {t(o.nameKey)}
+                      {o.label}
                     </button>
                   ))}
                 </div>
@@ -182,11 +188,11 @@ export default function AdvisorPage() {
                 <div className="flex flex-wrap gap-2">
                   {POPULAR_DESTINATIONS.map((dest) => (
                     <button
-                      key={dest.nameKey}
-                      onClick={() => handleDestQuickPick(dest.nameKey, dest.position)}
+                      key={dest.label}
+                      onClick={() => handleDestQuickPick(dest.label, dest.position)}
                       className="px-3 py-1.5 bg-gray-50 hover:bg-primary-50 hover:text-primary-700 rounded-lg text-xs border border-gray-200 hover:border-primary-200 transition-colors"
                     >
-                      {t(dest.nameKey)}
+                      {dest.label}
                     </button>
                   ))}
                 </div>
@@ -236,7 +242,7 @@ export default function AdvisorPage() {
                         <p className="text-xs text-gray-500">
                           {idx === 0 ? t('advisor.boardAt') : t('advisor.transferAt')}
                         </p>
-                        <p className="font-medium text-gray-900 text-sm">{t(segment.boardingStop.nameKey)}</p>
+                        <p className="font-medium text-gray-900 text-sm">{segment.boardingStop.name}</p>
                       </div>
                     </div>
 
@@ -262,7 +268,7 @@ export default function AdvisorPage() {
                         </div>
                         <div>
                           <p className="text-xs text-gray-500">{t('advisor.alightAt')}</p>
-                          <p className="font-medium text-gray-900 text-sm">{t(segment.alightingStop.nameKey)}</p>
+                          <p className="font-medium text-gray-900 text-sm">{segment.alightingStop.name}</p>
                         </div>
                       </div>
                     )}

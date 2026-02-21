@@ -145,7 +145,8 @@
     "planTrip": "规划路线",
     "subtitle2": "输入起点和终点，为您推荐最佳双条车路线",
     "stopResults": "双条车站点",
-    "placesResults": "附近地点"
+    "placesResults": "附近地点",
+    "selectFromList": "请从建议列表中选择一个地点"
   },
   "tips": {
     "pressButton": "快到站时按车内的按铃按钮",

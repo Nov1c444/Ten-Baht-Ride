@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import { useTranslation } from 'react-i18next'
-import { routes } from '@/data/routes'
+import { bahtBusStops } from '@/data/routes'
 import { PATTAYA_BOUNDS } from '@/utils/geo'
 import type { LatLng } from '@/types'
 
@@ -22,20 +22,6 @@ interface LocationSearchProps {
   icon: React.ReactNode
   className?: string
 }
-
-const ALL_STOPS = routes.flatMap((route) =>
-  route.stops.map((stop) => ({
-    id: stop.id,
-    name: stop.name,
-    nameKey: stop.nameKey,
-    position: stop.position,
-    routeNameKey: route.nameKey,
-  })),
-)
-
-const UNIQUE_STOPS = ALL_STOPS.filter(
-  (stop, idx, arr) => arr.findIndex((s) => s.name === stop.name) === idx,
-)
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value)
@@ -87,16 +73,13 @@ export default function LocationSearch({
       return
     }
     const q = debouncedQuery.toLowerCase()
-    const matches = UNIQUE_STOPS.filter(
-      (stop) =>
-        stop.name.toLowerCase().includes(q) ||
-        t(stop.nameKey).toLowerCase().includes(q),
+    const matches = bahtBusStops.filter(
+      (stop) => stop.name.toLowerCase().includes(q),
     )
       .slice(0, 5)
       .map((stop) => ({
         id: `stop-${stop.id}`,
-        label: t(stop.nameKey),
-        sublabel: t(stop.routeNameKey),
+        label: stop.name,
         position: stop.position,
         source: 'stop' as const,
       }))

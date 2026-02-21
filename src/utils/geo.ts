@@ -1,4 +1,5 @@
-import type { LatLng, RouteStop, SongthaewRoute, RidingAdvice, TripSegment, TripAdvice } from '@/types'
+import type { LatLng, SongthaewRoute, TripSegment, TripAdvice } from '@/types'
+import { bahtBusStops } from '@/data/routes'
 
 const toRadians = (deg: number) => (deg * Math.PI) / 180
 
@@ -12,7 +13,6 @@ export const haversineDistance = (a: LatLng, b: LatLng): number => {
   return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h))
 }
 
-// Project a point onto a line segment, return the closest point on segment and its distance
 const projectOntoSegment = (
   point: LatLng,
   segA: LatLng,
@@ -21,15 +21,12 @@ const projectOntoSegment = (
   const dx = segB.lng - segA.lng
   const dy = segB.lat - segA.lat
   const lenSq = dx * dx + dy * dy
-
   if (lenSq === 0) return { closest: segA, distance: haversineDistance(point, segA) }
-
   const t = Math.max(0, Math.min(1, ((point.lng - segA.lng) * dx + (point.lat - segA.lat) * dy) / lenSq))
   const closest = { lat: segA.lat + t * dy, lng: segA.lng + t * dx }
   return { closest, distance: haversineDistance(point, closest) }
 }
 
-// Find the minimum distance from a point to the route path (polyline)
 const distanceToPath = (position: LatLng, path: LatLng[]): number => {
   let minDist = Infinity
   for (let i = 0; i < path.length - 1; i++) {
@@ -39,73 +36,77 @@ const distanceToPath = (position: LatLng, path: LatLng[]): number => {
   return minDist
 }
 
-const findNearestStop = (position: LatLng, stops: RouteStop[]): { stop: RouteStop; distance: number } =>
-  stops.reduce(
+export interface BahtBusStop {
+  id: string
+  name: string
+  position: LatLng
+}
+
+const findNearestBahtBusStop = (position: LatLng): { stop: BahtBusStop; distance: number } =>
+  bahtBusStops.reduce(
     (best, stop) => {
       const d = haversineDistance(position, stop.position)
       return d < best.distance ? { stop, distance: d } : best
     },
-    { stop: stops[0], distance: Infinity },
+    { stop: bahtBusStops[0], distance: Infinity },
   )
 
-const DEFAULT_TIP_KEYS = ['tips.pressButton', 'tips.haveChange', 'tips.payWhenExit', 'tips.checkDirection']
-const MAX_WALKING_DISTANCE = 1500
-const TRANSFER_PROXIMITY = 300
+// Find the nearest baht bus stop that is also close to a given route path
+const findNearestStopOnRoute = (
+  position: LatLng,
+  routePath: LatLng[],
+  maxStopToRouteDistance = 500,
+): { stop: BahtBusStop; walkDistance: number } | null => {
+  const candidates = bahtBusStops
+    .map((stop) => ({
+      stop,
+      walkDistance: haversineDistance(position, stop.position),
+      distToRoute: distanceToPath(stop.position, routePath),
+    }))
+    .filter((c) => c.distToRoute <= maxStopToRouteDistance)
+    .sort((a, b) => a.walkDistance - b.walkDistance)
 
-export const findBestRoute = (destination: LatLng, routes: SongthaewRoute[]): RidingAdvice | null => {
-  const candidates = routes
-    .map((route) => {
-      const nearest = findNearestStop(destination, route.stops)
-      return { route, nearest }
-    })
-    .filter((c) => c.nearest.distance <= MAX_WALKING_DISTANCE)
-    .sort((a, b) => a.nearest.distance - b.nearest.distance)
-
-  if (candidates.length === 0) return null
-
-  const best = candidates[0]
-  const { route } = best
-  const alightingStop = best.nearest.stop
-  const boardingStop = route.stops.find((s) => s.isMainStop && s.id !== alightingStop.id) ?? route.stops[0]
-
-  return {
-    routeId: route.id,
-    routeNameKey: route.nameKey,
-    boardingStop,
-    alightingStop,
-    price: route.price,
-    tips: [],
-    tipKeys: DEFAULT_TIP_KEYS,
-  }
+  return candidates[0] ? { stop: candidates[0].stop, walkDistance: Math.round(candidates[0].walkDistance) } : null
 }
 
-const findTransferPoints = (
-  routeA: SongthaewRoute,
-  routeB: SongthaewRoute,
-): { stopA: RouteStop; stopB: RouteStop; distance: number }[] =>
-  routeA.stops.flatMap((stopA) =>
-    routeB.stops
-      .map((stopB) => ({ stopA, stopB, distance: haversineDistance(stopA.position, stopB.position) }))
-      .filter((pair) => pair.distance <= TRANSFER_PROXIMITY),
-  )
+const DEFAULT_TIP_KEYS = ['tips.pressButton', 'tips.haveChange', 'tips.payWhenExit', 'tips.checkDirection']
+const MAX_WALKING_DISTANCE = 2000
+const TRANSFER_PROXIMITY = 500
 
-/**
- * Evaluate how well a route serves a given position.
- * Uses path-based proximity: the walking distance is to the nearest point on the route path,
- * but the recommended stop is the nearest named stop (landmark the user can recognize).
- */
 const evaluateRouteForPosition = (
   position: LatLng,
   route: SongthaewRoute,
-): { walkDistance: number; stop: RouteStop; reachable: boolean } => {
+): { walkDistance: number; stop: BahtBusStop; reachable: boolean } | null => {
   const pathDist = distanceToPath(position, route.path)
-  const { stop } = findNearestStop(position, route.stops)
+  if (pathDist > MAX_WALKING_DISTANCE) return null
+
+  // Try to find a named stop near this route for the user
+  const stopOnRoute = findNearestStopOnRoute(position, route.path)
+  if (stopOnRoute) {
+    return {
+      walkDistance: Math.round(Math.min(pathDist, stopOnRoute.walkDistance)),
+      stop: stopOnRoute.stop,
+      reachable: true,
+    }
+  }
+
+  // Fallback: use nearest global stop as reference landmark
+  const nearest = findNearestBahtBusStop(position)
   return {
-    walkDistance: Math.round(Math.min(pathDist, haversineDistance(position, stop.position))),
-    stop,
-    reachable: pathDist <= MAX_WALKING_DISTANCE,
+    walkDistance: Math.round(pathDist),
+    stop: nearest.stop,
+    reachable: true,
   }
 }
+
+// Convert BahtBusStop to RouteStop-like shape for TripSegment compatibility
+const toRouteStop = (stop: BahtBusStop) => ({
+  id: stop.id,
+  name: stop.name,
+  nameKey: `bahtBusStops.${stop.id}`,
+  position: stop.position,
+  isMainStop: true,
+})
 
 const buildDirectCandidates = (
   origin: LatLng,
@@ -116,15 +117,15 @@ const buildDirectCandidates = (
     .map((route) => {
       const boarding = evaluateRouteForPosition(origin, route)
       const alighting = evaluateRouteForPosition(destination, route)
-      if (!boarding.reachable || !alighting.reachable) return null
+      if (!boarding || !alighting) return null
       if (boarding.stop.id === alighting.stop.id) return null
 
       const segment: TripSegment = {
         routeId: route.id,
         routeNameKey: route.nameKey,
         routeColor: route.color,
-        boardingStop: boarding.stop,
-        alightingStop: alighting.stop,
+        boardingStop: toRouteStop(boarding.stop),
+        alightingStop: toRouteStop(alighting.stop),
         price: route.price,
       }
       return {
@@ -139,6 +140,19 @@ const buildDirectCandidates = (
     })
     .filter((c): c is TripAdvice => c !== null)
 
+// Two routes share a transfer zone if any bahtBusStop is near both paths
+const findTransferStops = (
+  routeA: SongthaewRoute,
+  routeB: SongthaewRoute,
+): { stop: BahtBusStop; distA: number; distB: number }[] =>
+  bahtBusStops
+    .map((stop) => ({
+      stop,
+      distA: distanceToPath(stop.position, routeA.path),
+      distB: distanceToPath(stop.position, routeB.path),
+    }))
+    .filter((c) => c.distA <= TRANSFER_PROXIMITY && c.distB <= TRANSFER_PROXIMITY)
+
 const buildTransferCandidates = (
   origin: LatLng,
   destination: LatLng,
@@ -146,36 +160,36 @@ const buildTransferCandidates = (
 ): TripAdvice[] =>
   routes.flatMap((routeA, i) =>
     routes.slice(i + 1).flatMap((routeB) => {
-      const transfers = findTransferPoints(routeA, routeB)
-      if (transfers.length === 0) return []
+      const transferStops = findTransferStops(routeA, routeB)
+      if (transferStops.length === 0) return []
 
-      return transfers.flatMap(({ stopA, stopB }) => {
+      return transferStops.flatMap(({ stop: transferStop }) => {
         const options: TripAdvice[] = []
 
-        for (const [first, second, firstStop, secondStop] of [
-          [routeA, routeB, stopA, stopB],
-          [routeB, routeA, stopB, stopA],
-        ] as [SongthaewRoute, SongthaewRoute, RouteStop, RouteStop][]) {
+        for (const [first, second] of [
+          [routeA, routeB],
+          [routeB, routeA],
+        ] as [SongthaewRoute, SongthaewRoute][]) {
           const boarding = evaluateRouteForPosition(origin, first)
           const alighting = evaluateRouteForPosition(destination, second)
+          if (!boarding || !alighting) continue
 
-          if (!boarding.reachable || !alighting.reachable) continue
-          if (boarding.stop.id === firstStop.id && alighting.stop.id === secondStop.id) continue
+          const transferRouteStop = toRouteStop(transferStop)
 
           const seg1: TripSegment = {
             routeId: first.id,
             routeNameKey: first.nameKey,
             routeColor: first.color,
-            boardingStop: boarding.stop,
-            alightingStop: firstStop,
+            boardingStop: toRouteStop(boarding.stop),
+            alightingStop: transferRouteStop,
             price: first.price,
           }
           const seg2: TripSegment = {
             routeId: second.id,
             routeNameKey: second.nameKey,
             routeColor: second.color,
-            boardingStop: secondStop,
-            alightingStop: alighting.stop,
+            boardingStop: transferRouteStop,
+            alightingStop: toRouteStop(alighting.stop),
             price: second.price,
           }
 
